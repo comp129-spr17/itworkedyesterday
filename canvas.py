@@ -7,6 +7,8 @@
 from urllib import parse as parse
 from urllib import request as request
 import json
+import pprint
+import codecs
 
 def getUserToken():
     try:
@@ -19,14 +21,17 @@ def getUserToken():
     return token
 
 def getUserAccount():
-    mode = "accounts"
+    mode = "users/self/profile"
     url = service_url + mode + '?' + parse.urlencode({'access_token': user_token})
-    print(url)
-    return request.urlopen(url).read()
+    response = request.urlopen(url)
+    obj = json.load(reader(response))
+    return obj
 
+reader = codecs.getreader('utf-8')
+pp = pprint.PrettyPrinter(indent=4)
 service_url = "https://pacific.instructure.com/api/v1/"
 mode = ""
 url = ""
 user_token = getUserToken()
 working_data = getUserAccount()
-print(working_data)
+pp.pprint(working_data)
