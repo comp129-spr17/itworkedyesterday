@@ -1,16 +1,32 @@
-from urllib import request as urlrequest
-from urllib import parse as urlparse
+'''
+* It Worked Yesterday...
+* 2/7/17
+* canvas.py
+* Handles connection the Canvas Learning Managment Software.
+'''
+from urllib import parse as parse
+from urllib import request as request
 import json
 
-print("hello world")
+def getUserToken():
+    try:
+        token_file = open('usertoken.txt', 'r')
+        token = token_file.read()
+    except:
+        token = input("Please enter your token value: ")
+        token_file = open('usertoken.txt', 'w')
+        token_file.write(token)
+    return token
 
-class Token():
-    name = ""
-    string = ""
-    def __init__(self, n, s):
-        name = n
-        string = s
+def getUserAccount():
+    mode = "accounts"
+    url = service_url + mode + '?' + parse.urlencode({'access_token': user_token})
+    print(url)
+    return request.urlopen(url).read()
 
-service_url = "https://pacific.instructure.com/login/auth?"
-token_list = [Token("Jack", "4571~shh2TtP3Ik0FQ7lk2s351bLelRoKDdbVcudLlg5I3wQ4iXXwEKTJBwXoSInoDDL6")]
-canvas_url = service_url + urlparse.urlencode(client_id=token_list[0])
+service_url = "https://pacific.instructure.com/api/v1/"
+mode = ""
+url = ""
+user_token = getUserToken()
+working_data = getUserAccount()
+print(working_data)
