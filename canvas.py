@@ -55,6 +55,6 @@ def main():
     course_data = getCourses()
     pp.pprint(course_data)
     for course in course_data:
-        print(course['original_name'])
+        print(course['name'])
 
 main()
