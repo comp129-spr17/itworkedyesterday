@@ -34,6 +34,7 @@ def get_data(mode):
     return get_data_from_url(get_url(mode))
 
 
+''' Gathering and returning user data objects'''
 def get_user_token():
     try:
         token_file = open('usertoken.txt', 'r')
@@ -44,12 +45,29 @@ def get_user_token():
         token_file.write(token)
     return token
 
-
-def get_user_account():
-    mode = "users/self/profile"
+''' @return: User's profile if found, returns None if unable to retrieve
+    @rtype: Profile'''
+def get_user_profile():
+    try:
+        mode = "users/self/profile"
+    except:
+        print('Unable to retrieve user profile.')
+        return None
     return get_data(mode)
 
+''' @return: list of favorite courses, Returns None if unable to retrieve
+    @rtype: list of Favorite['context_type'] where context_type = "Course" '''
+def get_favorite_courses():
+    try:
+        mode = "users/self/favorites/courses"
+    except:
+        print('Unable to retrieve favorite courses.')
+        return None
+    return get_data(mode)
 
+''' Returns "Active" courses, which can be misleading if professor does not deactivate course after term end.
+    @return: list of "Active" courses.
+    @rtype: list of courses. '''
 def get_courses():
     mode = "courses"
     return get_data(mode)
@@ -58,12 +76,17 @@ def get_courses():
 def main():
     global user_token  # The token used to authenticate the user.
     user_token = get_user_token()
-    profile_data = get_user_account()
+    profile_data = get_user_profile()
     id_number = profile_data['id']  # Can be used in place of 'self' in mode.
     course_data = get_courses()
+    favorite_course_data = get_favorite_courses()
     pp.pprint(course_data)
+    print('\"Active\" Courses:')
     for course in course_data:
-        print(course['name'])
+        print('\t', course['name'])
+    print('Favorite Courses:')
+    for favorite_course in favorite_course_data:
+        print('\t', favorite_course['name'])
 
 
 main()
