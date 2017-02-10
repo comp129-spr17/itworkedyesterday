@@ -6,6 +6,8 @@
 '''
 from urllib import parse as parse
 from urllib import request as request
+from urllib import error as url_error
+import logging
 import json
 import pprint
 import codecs
@@ -35,6 +37,8 @@ def get_data(mode):
 
 
 ''' Gathering and returning user data objects'''
+
+
 def get_user_token():
     try:
         token_file = open('usertoken.txt', 'r')
@@ -47,27 +51,33 @@ def get_user_token():
 
 ''' @return: User's profile if found, returns None if unable to retrieve
     @rtype: Profile'''
+
+
 def get_user_profile():
+    mode = "users/self/profile"
     try:
-        mode = "users/self/profile"
-    except:
-        print('Unable to retrieve user profile.')
+        return get_data(mode)
+    except (url_error.HTTPError, url_error.URLError, url_error.ContentTooShortError):
+        logging.error('Unable to retrieve user profile.')
         return None
-    return get_data(mode)
 
 ''' @return: list of favorite courses, Returns None if unable to retrieve
     @rtype: list of Favorite['context_type'] where context_type = "Course" '''
+
+
 def get_favorite_courses():
+    mode = "users/self/favorites/courses"
     try:
-        mode = "users/self/favorites/courses"
-    except:
-        print('Unable to retrieve favorite courses.')
+        return get_data(mode)
+    except (url_error.HTTPError, url_error.URLError, url_error.ContentTooShortError):
+        logging.error('Unable to retrieve favorite courses.')
         return None
-    return get_data(mode)
 
 ''' Returns "Active" courses, which can be misleading if professor does not deactivate course after term end.
     @return: list of "Active" courses.
     @rtype: list of courses. '''
+
+
 def get_courses():
     mode = "courses"
     return get_data(mode)
