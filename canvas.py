@@ -90,6 +90,8 @@ def get_assignments(course_id):
         logging.error('Unable to retrieve assignment list from each of your favorite courses.')
         return None
 
+
+
 def main():
     global user_token  # The token used to authenticate the user.
     user_token = get_user_token()
@@ -109,6 +111,8 @@ def main():
         for assignments in assignments_data:
             print('\t\t\t', assignments['name'])
             print('\t\t\t\t', assignments['description'])
+            print('\t\t\t\t', 'Available: ', assignments['unlock_at'])
+            print('\t\t\t\t', 'Due: ', assignments['due_at'])
 
 
 main()
