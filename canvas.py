@@ -113,6 +113,8 @@ def main():
             print('\t\t\t\t', assignments['description'])
             print('\t\t\t\t', 'Available: ', assignments['unlock_at'], 'to', assignments['lock_at'])
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
+            print('\t\t\t\t', 'Points Possible: ', assignments['points_possible'])
+            print('\t\t\t\t', 'Grading Type: ', assignments['grading_type'])
 
 
 main()
