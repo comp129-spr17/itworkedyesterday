@@ -111,7 +111,7 @@ def main():
         for assignments in assignments_data:
             print('\t\t\t', assignments['name'])
             print('\t\t\t\t', assignments['description'])
-            print('\t\t\t\t', 'Available: ', assignments['unlock_at'])
+            print('\t\t\t\t', 'Available: ', assignments['unlock_at'], 'to', assignments['lock_at'])
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
 
 
