@@ -82,6 +82,13 @@ def get_courses():
     mode = "courses"
     return get_data(mode)
 
+def get_assignments(course_id):
+    mode = "users/self/courses/" + course_id + "/assignments"
+    try:
+        return get_data(mode)
+    except (url_error.HTTPError, url_error.URLError, url_error.ContentTooShortError):
+        logging.error('Unable to retrieve assignment list from each of your favorite courses.')
+        return None
 
 def main():
     global user_token  # The token used to authenticate the user.
@@ -97,6 +104,11 @@ def main():
     print('Favorite Courses:')
     for favorite_course in favorite_course_data:
         print('\t', favorite_course['name'])
+        print('\t\t','Assignments From Course:')
+        assignments_data = get_assignments(str(favorite_course['id']))
+        for assignments in assignments_data:
+            print('\t\t\t', assignments['name'])
+            print('\t\t\t\t', assignments['description'])
 
 
 main()
