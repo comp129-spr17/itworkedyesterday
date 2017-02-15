@@ -11,6 +11,7 @@ import logging
 import json
 import pprint
 import codecs
+import data_structures
 
 '''Global variables'''
 reader = codecs.getreader('utf-8')  # This exists to help the json and urllib libraries work together.
@@ -53,12 +54,12 @@ def get_user_token():
     @rtype: Profile'''
 
 
-def get_user_profile():
+def get_user():
     mode = "users/self/profile"
     try:
         return get_data(mode)
     except (url_error.HTTPError, url_error.URLError, url_error.ContentTooShortError):
-        logging.error('Unable to retrieve user profile.')
+        logging.error('Unable to retrieve user data.')
         return None
 
 ''' @return: list of favorite courses, Returns None if unable to retrieve
@@ -95,19 +96,25 @@ def get_assignments(course_id):
 def main():
     global user_token  # The token used to authenticate the user.
     user_token = get_user_token()
-    profile_data = get_user_profile()
-    id_number = profile_data['id']  # Can be used in place of 'self' in mode.
+    user_data = get_user()
+    user = data_structures.User(user_data)
+    id_number = user_data['id']  # Can be used in place of 'self' in mode.
     course_data = get_courses()
     favorite_course_data = get_favorite_courses()
+    user.add(favorite_course_data)
+    user.add(user_token)
     pp.pprint(course_data)
     print('\"Active\" Courses:')
     for course in course_data:
         print('\t', course['name'])
     print('Favorite Courses:')
+    print(type(favorite_course_data))
+    # Print Favorite Courses
     for favorite_course in favorite_course_data:
         print('\t', favorite_course['name'])
         print('\t\t','Assignments From Course:')
         assignments_data = get_assignments(str(favorite_course['id']))
+        # Print assignments in course
         for assignments in assignments_data:
             print('\t\t\t', assignments['name'])
             print('\t\t\t\t', assignments['description'])
@@ -115,6 +122,7 @@ def main():
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
             print('\t\t\t\t', 'Points Possible: ', assignments['points_possible'])
             print('\t\t\t\t', 'Grading Type: ', assignments['grading_type'])
-
+    print("User Object string output:")
+    print(user)
 
 main()
