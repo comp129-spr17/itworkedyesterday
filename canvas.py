@@ -91,6 +91,18 @@ def get_assignments(course_id):
         logging.error('Unable to retrieve assignment list from each of your favorite courses.')
         return None
 
+''' Returns an estimate of time needed to complete assignments for each course based on user input
+    @return: dictionary of time estimates.
+    @rtype: dictionary of courses and corresponding time values. '''
+
+def time_estimate():
+    input_time = {}
+    course_items = get_favorite_courses()
+    print("Enter the average amount of time needed [in minutes] to complete an assignment for the following class:")
+    for course in course_items:
+        time = input(course['name'] + ': ')
+        input_time[course['name']] = time
+    return input_time
 
 
 def main():
@@ -104,6 +116,7 @@ def main():
     user.add(favorite_course_data)
     user.add(user_token)
     pp.pprint(course_data)
+    time_needed = time_estimate()
     print('\"Active\" Courses:')
     for course in course_data:
         print('\t', course['name'])
@@ -122,6 +135,7 @@ def main():
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
             print('\t\t\t\t', 'Points Possible: ', assignments['points_possible'])
             print('\t\t\t\t', 'Grading Type: ', assignments['grading_type'])
+            print('\t\t\t\t', 'Time Needed to Complete: ', time_needed[favorite_course['name']], " minutes")
     print("User Object string output:")
     print(user)
 
