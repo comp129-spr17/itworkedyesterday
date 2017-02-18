@@ -39,3 +39,18 @@ class User():
         except Exception:
             pass
         return to_return
+
+
+class Assignment_Task ():
+
+    def __init__(self, data):
+        self.assignment_name = data['name']
+        self.description = data['description']
+        self.due_date = data['due_at']
+        self.all_dates = data['all_dates']
+        self.course_id = data['course_id']
+
+
+    def __str__(self):
+        to_return = "Course ID: {}\nAssignment: {}\nDescription: {}\nDue Date: {}\n".format(self.course_id, self.assignment_name, self.description, self.due_date)
+        return to_return
