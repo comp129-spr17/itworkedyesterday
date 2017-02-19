@@ -131,6 +131,7 @@ def main():
         # Print assignments in course
         for assignments in assignments_data:
             print('\t\t\t', assignments['name'])
+
             html = str(assignments['description'])
             soup = BeautifulSoup(html, "html.parser")
             print(soup.get_text())
