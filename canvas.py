@@ -7,6 +7,7 @@
 from urllib import parse as parse
 from urllib import request as request
 from urllib import error as url_error
+from bs4 import BeautifulSoup
 import logging
 import json
 import pprint
@@ -130,7 +131,10 @@ def main():
         # Print assignments in course
         for assignments in assignments_data:
             print('\t\t\t', assignments['name'])
-            print('\t\t\t\t', assignments['description'])
+            html = str(assignments['description'])
+            soup = BeautifulSoup(html, "html.parser")
+            print(soup.get_text())
+            #print('\t\t\t\t', assignments['description'])
             print('\t\t\t\t', 'Available: ', assignments['unlock_at'], 'to', assignments['lock_at'])
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
             print('\t\t\t\t', 'Points Possible: ', assignments['points_possible'])
