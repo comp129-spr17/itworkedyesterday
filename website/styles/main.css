@@ -1,3 +1,12 @@
+
+#bs-example-navbar-collapse-1 ul{
+	float: right;
+}
+
+#bs-example-navbar-collapse-1 ul .active{
+	border-radius: 5px 5px 0 0;
+}
+
 .listContainer{
 	border: 1px solid #687D6D;
 	border-radius: 5px;
