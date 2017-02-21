@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<title>Completed Tasks</title>
+		<title>Login Menu</title>
 		<link href="styles/main.css" rel="stylesheet" />
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -13,7 +13,6 @@
 
 	<body>
 		<header class="navbar-inverse" role="banner">
-			<!--<div class="container">-->
 				<nav role="navigation">
 				  <div class="container-fluid">
 				    <!-- Brand and toggle get grouped for better mobile display -->
@@ -30,36 +29,33 @@
 				    <!-- Collect the nav links, forms, and other content for toggling -->
 				    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				      <ul class="nav navbar-nav">
-				        <li><a href="tasks.html">Tasks</a></li>
-				        <li class="active"><a href="#">Completed</a><span class="sr-only">(current)</span></li>
-				        <li><a href="index.html">Log Out</a></li>
+				        <li><a href="index.html">Sign In</a></li>
+				        <li class="active"><a href="#">Sign Up<span class="sr-only">(current)</span></a></li>
 				      </ul>
 				      
 				    </div><!-- /.navbar-collapse -->
 				  </div><!-- /.container-fluid -->
 				</nav>
-			
 		</header>
 
-		<div class="listContainer">
-			<div class="heading">List</div>
-			<div class="list">
-				<div class="task">
-					Test on 2/10
-					<div class="showOnHover"> 
-						<a href="#" class="btn btn-xs btn-warning">Edit</a>
-						<a href="#" class="btn btn-xs btn-danger">Delete</a>
-					</div>
-				</div>
-				<div class="task">
-					Buy a cat
-					<div class="showOnHover"> 
-						<a href="#" class="btn btn-xs btn-warning">Edit</a>
-						<a href="#" class="btn btn-xs btn-danger">Delete</a>
-					</div>
-				</div>
-
+		<div class="signInContainer">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon2">
 			</div>
+
+			<div class="input-group">
+  				<input type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon2">
+			</div>
+
+			<div class="input-group">
+  				<input type="password" class="form-control" placeholder="Retype Password" aria-describedby="basic-addon2">
+			</div>
+
+			<div class="input-group">
+  				<input type="password" class="form-control" placeholder="Canvas Token Key" aria-describedby="basic-addon2">
+			</div>
+
+			<a href="index.html" class="btn btn-lrg btn-success">Sign Up</a>
 		</div>
 
 		<!-- Hello World this is <strong>bold</strong>

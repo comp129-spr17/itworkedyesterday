@@ -3,7 +3,7 @@
 	float: right;
 }
 
-#bs-example-navbar-collapse-1 ul .active{
+#bs-example-navbar-collapse-1 ul li.active{
 	border-radius: 5px 5px 0 0;
 }
 
@@ -21,8 +21,8 @@
 	padding: 10px 20px;
 }
 
-.listContainer .list{
-
+.listContainer .heading .btn{
+	float: right;
 }
 
 .listContainer .list .task{
@@ -39,3 +39,13 @@
 	float: right;
 }
 
+.signInContainer .input-group{
+	display: block;
+	margin: 10% 20% 0 20%;
+}
+
+.signInContainer .btn{
+	display: inline-block;
+	width: 60%;
+	margin: 0 20% 0 20%;
+}
