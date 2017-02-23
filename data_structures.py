@@ -51,8 +51,7 @@ class User():
 class TodoList():
     def __init__(self, data):
         self.canvas_id = data["id"]
-        self.canvas_name = data["name"]
-        self.canvas_state = data["workflow_state"]
+        self.name = data["name"]
         self.canvas_account = data["account_id"]
         self.canvas_term = data["enrollment_term"]
         self.service = Service.CANVAS
@@ -69,10 +68,21 @@ class TodoList():
     def __str__(self):
         to_return = ''
         to_return +=\
-            "Canvas ID: {}\nCourse Name: {}\nWork State: {}\nAssociated Account: {}\nTerm: {}"\
-            .format(self.canvas_id, self.canvas_name, self.canvas_state,\
-            self.canvas_account, self.canvas_term)
+            "Canvas ID: {}\nCourse Name: {}\nAssociated Account: {}\nTerm: {}"\
+            .format(self.canvas_id, self.name,\
+                    self.canvas_account, self.canvas_term)
         return to_return
 
     def __sizeof__(self):
         return len(self.todos)
+
+def main():
+    user_data = {'id': 42, 'name': 'Arthur Dent', 'bio': 'Mostly harmless.', 'avatar_url': 'www.images.google.com', 'login_id': 'adent42'}
+    test_user = User(user_data)
+    print(str(test_user))
+    print('\n')
+    course_data = {'id': 51, 'name': 'Intro to CS', 'account_id': 42, 'enrollment_term': 'Fall 2015'}
+    test_course = TodoList(course_data)
+    print(str(test_course))
+
+main()
