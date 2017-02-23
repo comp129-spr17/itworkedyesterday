@@ -47,6 +47,7 @@ class User():
             pass
         return to_return
 
+
 '''Pass in a Course object as data.'''
 class TodoList():
     def __init__(self, data):
@@ -76,6 +77,20 @@ class TodoList():
     def __sizeof__(self):
         return len(self.todos)
 
+
+class Assignment_Task():
+    def __init__(self, data):
+        self.assignment = data['name']
+        #self.description = data['description']
+        #self.due_at = data['due_at']
+        #self.course_id = data['course_id']
+
+    def __str__(self):
+        to_return = ''
+        to_return += "Course ID: {}\nAssignment: {}\nDescription: {}\nDue Date: {}\n".format(self.course_id, self.assignment,self.description, self.due_at)
+        return to_return
+
+
 def main():
     user_data = {'id': 42, 'name': 'Arthur Dent', 'bio': 'Mostly harmless.', 'avatar_url': 'www.images.google.com', 'login_id': 'adent42'}
     test_user = User(user_data)
@@ -84,5 +99,3 @@ def main():
     course_data = {'id': 51, 'name': 'Intro to CS', 'account_id': 42, 'enrollment_term': 'Fall 2015'}
     test_course = TodoList(course_data)
     print(str(test_course))
-
-main()
