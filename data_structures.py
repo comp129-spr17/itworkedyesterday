@@ -1,4 +1,11 @@
 import logging
+from enum import Enum
+from typing import Dict
+
+class Service(Enum):
+    ORIGINAL = 0
+    CANVAS = 1
+
 
 '''Pass in a Profile object'''
 class User():
@@ -40,17 +47,32 @@ class User():
             pass
         return to_return
 
-
-class Assignment_Task ():
-
+'''Pass in a Course object as data.'''
+class TodoList():
     def __init__(self, data):
-        self.assignment_name = data['name']
-        self.description = data['description']
-        self.due_date = data['due_at']
-        self.all_dates = data['all_dates']
-        self.course_id = data['course_id']
+        self.canvas_id = data["id"]
+        self.canvas_name = data["name"]
+        self.canvas_state = data["workflow_state"]
+        self.canvas_account = data["account_id"]
+        self.canvas_term = data["enrollment_term"]
+        self.service = Service.CANVAS
+        self.todos = []
 
+    def add(self, data):
+        if type(data) is dict:
+            self.todos.append(data)
+        elif type(data) is list:
+            self.todos = self.todos + data
+        else:
+            logging.debug("Data type not recognized")
 
     def __str__(self):
-        to_return = "Course ID: {}\nAssignment: {}\nDescription: {}\nDue Date: {}\n".format(self.course_id, self.assignment_name, self.description, self.due_date)
+        to_return = ''
+        to_return +=\
+            "Canvas ID: {}\nCourse Name: {}\nWork State: {}\nAssociated Account: {}\nTerm: {}"\
+            .format(self.canvas_id, self.canvas_name, self.canvas_state,\
+            self.canvas_account, self.canvas_term)
         return to_return
+
+    def __sizeof__(self):
+        return len(self.todos)

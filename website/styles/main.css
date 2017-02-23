@@ -1,0 +1,51 @@
+
+#bs-example-navbar-collapse-1 ul{
+	float: right;
+}
+
+#bs-example-navbar-collapse-1 ul li.active{
+	border-radius: 5px 5px 0 0;
+}
+
+.listContainer{
+	border: 1px solid #687D6D;
+	border-radius: 5px;
+	box-shadow: 0px 0px 4px #ccc;
+	margin: 3%;
+}
+
+.listContainer .heading{
+	background: grey;
+	border-radius: 5px 5px 0 0;
+	color: black;
+	padding: 10px 20px;
+}
+
+.listContainer .heading .btn{
+	float: right;
+}
+
+.listContainer .list .task{
+	border: 1px solid grey;
+	padding: 5px 10px;
+}
+
+.listContainer .list .task .showOnHover{
+	display: none;
+}
+
+.listContainer .list .task:hover .showOnHover{
+	display: inline-block;
+	float: right;
+}
+
+.signInContainer .input-group{
+	display: block;
+	margin: 10% 20% 0 20%;
+}
+
+.signInContainer .btn{
+	display: inline-block;
+	width: 60%;
+	margin: 0 20% 0 20%;
+}
