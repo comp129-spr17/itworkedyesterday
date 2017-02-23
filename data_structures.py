@@ -76,3 +76,15 @@ class TodoList():
 
     def __sizeof__(self):
         return len(self.todos)
+
+class Assignment_Task():
+    def __init__(self, data):
+        self.assignment = data['name']
+        #self.description = data['description']
+        #self.due_at = data['due_at']
+        #self.course_id = data['course_id']
+
+    def __str__(self):
+        to_return = ''
+        to_return += "Course ID: {}\nAssignment: {}\nDescription: {}\nDue Date: {}\n".format(self.course_id, self.assignment,self.description, self.due_at)
+        return to_return
