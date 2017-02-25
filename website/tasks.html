@@ -42,10 +42,53 @@
 		<div class="listContainer">
 			<div class="heading">
 				List
-				<a href="#" class="btn btn-xs btn-success">New</a>
+				<!-- Trigger the modal with a button -->
+				<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" id="newButton">New</button>
+
+				<!-- Modal -->
+				<div id="myModal" class="modal fade" role="dialog">
+				  <div class="modal-dialog">
+
+				    <!-- Modal content-->
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal">&times;</button>
+				        <h4 class="modal-title">New Task</h4>
+				      </div>
+				      <div class="modal-body">
+						<div class="input-group">
+						  <input type="text" class="form-control" placeholder="Task Title" aria-describedby="basic-addon1" id="titleInput">
+						</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="addTask()">Create</button>
+				      </div>
+				    </div>
+
+				  </div>
+				</div>
 			</div>
-				<div class="list">
-					<div class="task">
+				<ul id="todoList">
+					<li>
+						test
+						<div class="showOnHover" id="taskOptions"> 
+							<a href="#" class="btn btn-xs btn-success">Completed</a>
+							<a href="#" class="btn btn-xs btn-warning">Edit</a>
+							<a href="#" class="btn btn-xs btn-danger">Delete</a>
+						</div>
+					</li>
+					<li>
+						test2
+						<div class="showOnHover" id="taskOptions"> 
+							<a href="#" class="btn btn-xs btn-success">Completed</a>
+							<a href="#" class="btn btn-xs btn-warning">Edit</a>
+							<a href="#" class="btn btn-xs btn-danger">Delete</a>
+						</div>
+					</li>
+				</ul>
+				<!--
+				<div class="list" id="todoList">
+					<div class="task" id="1">
 						Complete Homework for Comp170
 						<div class="showOnHover"> 
 							<a href="#" class="btn btn-xs btn-success">Completed</a>
@@ -53,7 +96,7 @@
 							<a href="#" class="btn btn-xs btn-danger">Delete</a>
 						</div>
 					</div>
-					<div class="task">
+					<div class="task" id="2">
 						Take out cat from cage
 						<div class="showOnHover"> 
 							<a href="#" class="btn btn-xs btn-success">Completed</a>
@@ -62,8 +105,10 @@
 						</div>
 					</div>
 				</div>
+				-->
 		</div>
-
+		<!-- Java script file -->
+		<script src="js/main.js"></script>
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<!-- Latest compiled and minified JavaScript -->
