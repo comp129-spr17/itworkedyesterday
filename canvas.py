@@ -94,8 +94,8 @@ class TodoList:
         self.assignment_tasks = []
         self.user_id = user_id
         for assignment in assignments:
-            todo = Assignment_Task(assignment)
-            self.todos.append(todo)
+            todo = Assignment_Task(assignment, user_id)
+            self.assignment_tasks.append(todo)
 
     def __str__(self):
         to_return = ''
@@ -105,7 +105,7 @@ class TodoList:
         return to_return
 
     def __sizeof__(self):
-        return len(self.todos)
+        return len(self.assignment_tasks)
 
     def add(self, data):
         if type(data) is dict:
