@@ -32,22 +32,21 @@ $(document).ready(function(){
       $('#editButton').on('click',function(){
 
         var editedItem = $('#editInput');
-        var todo = {editedItem: item.val()};
-        
-        $.ajax({
-          type: 'DELETE', //fires delete handler
-          url: '/todo/' + item,
-          success: function(data){
-            //do something with the data via front-end framework
-            location.reload();
-          }
-        });
+        var todo = {item: editedItem.val()};
+
         $.ajax({
           //this is a post request to the /todo route when ajax request made and passes
           //todo object
           type: 'POST',
           url: '/todo',
           data: todo,
+          success: function(data){
+            //do something with the data via front-end framework
+          }
+        });
+        $.ajax({
+          type: 'DELETE', //fires delete handler
+          url: '/todo/' + item,
           success: function(data){
             //do something with the data via front-end framework
             location.reload();
