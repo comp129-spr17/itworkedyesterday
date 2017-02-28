@@ -220,7 +220,6 @@ def main():
     user_token = get_user_token()
     user_data = get_user()
     user = User(user_data)
-    # user2 = data_structures.Assignment_Task(user_data)
     id_number = user_data['id']  # Can be used in place of 'self' in mode.
     course_data = get_courses()
     favorite_course_data = get_favorite_courses()
@@ -254,6 +253,5 @@ def main():
     '''
     print("\nUser Object string output:")
     print(user)
-    # print(user2)
 
 main()
