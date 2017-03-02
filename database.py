@@ -1,4 +1,4 @@
-import sqlite3
+import MySQL as db
 import data_structures
 import canvas
 ''' Global variables '''
@@ -6,13 +6,14 @@ conn = None
 db_location = 'canvasplusplus.cm39236m2xbo.us-west-2.rds.amazonaws.com'
 db_user = 'admin'
 db_password = 'mypassword'
+db_name = 'testDB'
 db = None
 ''' '''
 
 
 def main():
     global db_location
-    conn = sqlite3.connect(db_location)
+    conn = MySQLdb.connect(host = db_location, port = 3306, user = db_user, password = db_password, db = db_name)
     create_user_table()
     user = canvas.User(user_data) #TODO: Pass in user data a different way
 
