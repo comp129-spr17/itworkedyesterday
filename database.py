@@ -1,8 +1,9 @@
 import sqlite3
 import data_structures
+import canvas
 
 def main():
-    db = example.db
+    db = 'canvasplusplus.cm39236m2xbo.us-west-2.rds.amazonaws.com'
     conn=sqlite3.connect(db)
     create_user_table()
     user = User(user_data)
