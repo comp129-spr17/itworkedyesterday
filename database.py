@@ -1,12 +1,28 @@
-import sqlite3
+import mysql.connector
+from mysql.connector import errorcode
 import data_structures
 import canvas
 
 def main():
-    db = 'canvasplusplus.cm39236m2xbo.us-west-2.rds.amazonaws.com'
-    conn=sqlite3.connect(db)
-    create_user_table()
-    user = User(user_data)
+    connect_to_db()
+
+def connect_to_db():
+    username = 'admin'
+    pw = 'mypassword'
+    host = 'canvasplusplus.cm39236m2xbo.us-west-2.rds.amazonaws.com'
+    db = 'canvas++'
+    try:
+        connection = mysql.connector.connect(user=username, password=pw, host=host, databse=db)
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("ERROR: Username or Password is not correct")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("ERROR: Database does not exist")
+        else:
+            print(err)
+    else:
+        connection.close()
+
 
 def create_user_table():
     #cursor object
