@@ -27,33 +27,56 @@ class RetrieveFromCanvasTest(unittest.TestCase):
 
     # Test to see if able to retrieve token from file
     def test_a_obtain_token(self):
+        self.token = None
         try:
             token_file = open('usertoken.txt', 'r')
-            token = token_file.read()
+            self.token = token_file.read()
             token_file.close()
         except:
             pass
-        self.assertIsNotNone(token)
+        self.assertIsNotNone(self.token)
 
     # Test to see if able to retrieve at least one class from canvas
     def test_b_has_courses(self):
-        global user_token
-        user_token = get_user_token()
-        self.courses = get_favorite_courses()
-
+        self.token = None
+        self.courses = None
+        try:
+            token_file = open('usertoken.txt', 'r')
+            self.token = token_file.read()
+            token_file.close()
+        except:
+            pass
+        try:
+            self.courses = get_favorite_courses()
+        except:
+            pass
+        self.assertIsNotNone(self.token)
         self.assertGreater(len(self.courses), 0)
 
     # Test to see if able to pull at least one assignment from canvas
     def test_c_has_assignments(self):
-        global user_token
-        user_token = get_user_token()
-        self.courses = get_favorite_courses()
+        self.token = None
+        self.courses = None
+        try:
+            token_file = open('usertoken.txt', 'r')
+            self.token = token_file.read()
+            token_file.close()
+        except:
+            pass
+        try:
+            self.courses = get_favorite_courses()
+        except:
+            pass
         self.assignments = []
-        for course in self.courses:
-            self.course_assignments = get_assignments(str(course['id']))
-            for assignment in self.course_assignments:
-                self.assignments.append(assignment)
-
+        try:
+            for course in self.courses:
+                self.course_assignments = get_assignments(str(course['id']))
+                for assignment in self.course_assignments:
+                    self.assignments.append(assignment)
+        except:
+            pass
+        self.assertIsNotNone(self.token)
+        self.assertIsNotNone(self.courses)
         self.assertGreater(len(self.assignments), 0)
 
 
