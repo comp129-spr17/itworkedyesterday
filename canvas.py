@@ -15,14 +15,46 @@ import logging
 import json
 import pprint
 import codecs
+import unittest
 
 '''Global variables'''
 reader = codecs.getreader('utf-8')  # This exists to help the json and urllib libraries work together.
 pp = pprint.PrettyPrinter(indent=4)  # Print out larger, data objects in a readable manner.
 service_url = "https://pacific.instructure.com/api/v1/"  # The site that we're pulling our data from.
 
-'''Gets the url that contains the desired data. URL changes based on the user token and the mode.
-@param mode: Represents the type of data that we're trying to recieve.'''
+
+class RetrieveFromCanvasTest(unittest.TestCase):
+
+    # Test to see if able to retrieve token from file
+    def test_a_obtain_token(self):
+        try:
+            token_file = open('usertoken.txt', 'r')
+            token = token_file.read()
+            token_file.close()
+        except:
+            pass
+        self.assertIsNotNone(token)
+
+    # Test to see if able to retrieve at least one class from canvas
+    def test_b_has_courses(self):
+        global user_token
+        user_token = get_user_token()
+        self.courses = get_favorite_courses()
+
+        self.assertGreater(len(self.courses), 0)
+
+    # Test to see if able to pull at least one assignment from canvas
+    def test_c_has_assignments(self):
+        global user_token
+        user_token = get_user_token()
+        self.courses = get_favorite_courses()
+        self.assignments = []
+        for course in self.courses:
+            self.course_assignments = get_assignments(str(course['id']))
+            for assignment in self.course_assignments:
+                self.assignments.append(assignment)
+
+        self.assertGreater(len(self.assignments), 0)
 
 
 class Service(Enum):
@@ -31,8 +63,6 @@ class Service(Enum):
 
 
 '''Pass in a Profile object'''
-
-
 class User:
 
     def __init__(self, data):
@@ -80,9 +110,8 @@ class User:
         else:
             logging.debug("Data type not recognized")
 
+
 '''Pass in a Course object as data.'''
-
-
 class TodoList:
     def __init__(self, data, user_id):
         self.canvas_id = data["id"]
@@ -132,6 +161,8 @@ class Assignment_Task:
         return to_return
 
 
+'''Gets the url that contains the desired data. URL changes based on the user token and the mode.
+@param mode: Represents the type of data that we're trying to recieve.'''
 def get_url(mode):
     return service_url + mode + '?' + parse.urlencode({'access_token': user_token})
 
@@ -148,22 +179,20 @@ def get_data(mode):
 
 
 ''' Gathering and returning user data objects'''
-
-
 def get_user_token():
     try:
         token_file = open('usertoken.txt', 'r')
         token = token_file.read()
+        token_file.close()
     except:
         token = input("Please enter your token value: ")
         token_file = open('usertoken.txt', 'w')
         token_file.write(token)
     return token
 
+
 ''' @return: User's profile if found, returns None if unable to retrieve
     @rtype: Profile'''
-
-
 def get_user():
     mode = "users/self/profile"
     try:
@@ -172,10 +201,9 @@ def get_user():
         logging.error('Unable to retrieve user data.')
         return None
 
+
 ''' @return: list of favorite courses or active courses if user has no favorite courses. Returns None if unable to retrieve
     @rtype: list of Favorite['context_type'] where context_type = "Course" '''
-
-
 def get_favorite_courses():
     mode = "users/self/favorites/courses"
     try:
@@ -184,14 +212,14 @@ def get_favorite_courses():
         logging.error('Unable to retrieve favorite courses.')
         return None
 
+
 ''' Returns "Active" courses, which can be misleading if professor does not deactivate course after term end.
     @return: list of "Active" courses.
     @rtype: list of courses. '''
-
-
 def get_courses():
     mode = "courses"
     return get_data(mode)
+
 
 def get_assignments(course_id):
     mode = "users/self/courses/" + course_id + "/assignments"
@@ -201,10 +229,10 @@ def get_assignments(course_id):
         logging.error('Unable to retrieve assignment list from each of your favorite courses.')
         return None
 
+
 ''' Returns an estimate of time needed to complete assignments for each course based on user input
     @return: dictionary of time estimates.
     @rtype: dictionary of courses and corresponding time values. '''
-
 def time_estimate():
     input_time = {}
     course_items = get_favorite_courses()
@@ -214,9 +242,9 @@ def time_estimate():
         input_time[course['name']] = time
     return input_time
 
-
 def main():
     global user_token  # The token used to authenticate the user.
+    unittest.main(exit=False)
     user_token = get_user_token()
     user_data = get_user()
     user = User(user_data)
