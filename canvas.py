@@ -2,7 +2,7 @@
 * It Worked Yesterday...
 * 2/7/17
 * canvas.py
-* Handles connection the Canvas Learning Managment Software.
+* Handles connection the Canvas Learning Management Software.
 '''
 from urllib import parse as parse
 from urllib import request as request
@@ -38,11 +38,12 @@ class RetrieveFromCanvasTest(unittest.TestCase):
 
     # Test to see if able to retrieve at least one class from canvas
     def test_b_has_courses(self):
-        self.token = None
-        self.courses = None
+        global user_token
+        user_token = None
+        self.courses = []
         try:
             token_file = open('usertoken.txt', 'r')
-            self.token = token_file.read()
+            user_token = token_file.read()
             token_file.close()
         except:
             pass
@@ -50,16 +51,17 @@ class RetrieveFromCanvasTest(unittest.TestCase):
             self.courses = get_favorite_courses()
         except:
             pass
-        self.assertIsNotNone(self.token)
+        self.assertIsNotNone(user_token)
         self.assertGreater(len(self.courses), 0)
 
     # Test to see if able to pull at least one assignment from canvas
     def test_c_has_assignments(self):
-        self.token = None
-        self.courses = None
+        global user_token
+        user_token = None
+        self.courses = []
         try:
             token_file = open('usertoken.txt', 'r')
-            self.token = token_file.read()
+            user_token = token_file.read()
             token_file.close()
         except:
             pass
@@ -75,7 +77,7 @@ class RetrieveFromCanvasTest(unittest.TestCase):
                     self.assignments.append(assignment)
         except:
             pass
-        self.assertIsNotNone(self.token)
+        self.assertIsNotNone(user_token)
         self.assertIsNotNone(self.courses)
         self.assertGreater(len(self.assignments), 0)
 
@@ -271,9 +273,6 @@ def main():
     user_token = get_user_token()
     user_data = get_user()
     user = User(user_data)
-    id_number = user_data['id']  # Can be used in place of 'self' in mode.
-    course_data = get_courses()
-    favorite_course_data = get_favorite_courses()
     user.add(get_favorite_courses())
     user.add(user_token)
     '''
