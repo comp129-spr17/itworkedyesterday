@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+
   //Add task function
   $('#createButton').on('click', function(){
 
@@ -33,7 +34,6 @@ $(document).ready(function(){
 
         var editedItem = $('#editInput');
         var todo = {item: editedItem.val()};
-
         $.ajax({
           //this is a post request to the /todo route when ajax request made and passes
           //todo object
@@ -68,5 +68,27 @@ $(document).ready(function(){
         }
       });
   });
+
+  //Completed task function
+  $('#todoList .showOnHover .btn-success').on('click', function(){
+    var item = $(this).parent().parent().contents('#onHover').text().replace(/ /g, "-");
+    var todoItem = $(this).parent().parent().contents('#onHover').text();
+    var todo = {item: todoItem};
+    $.ajax({
+      type: 'POST',
+      url: '/completed',
+      data: todo,
+      success: function(data){
+      }
+    });
+    $.ajax({
+      type: 'DELETE', //fires delete handler
+      url: '/todo/' + item,
+      success: function(data){
+        //do something with the data via front-end framework
+        location.reload();
+      }
+    });
+  })
 
 });
