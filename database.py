@@ -1,30 +1,35 @@
 import sqlite3
+import MySQLdb
 import data_structures
 import canvas
 
 def main():
-    connect_to_db()
-    TABLES = {}
-
-def connect_to_db():
-    """
     username = 'admin'
     pw = 'mypassword'
     host = 'canvasplusplus.cm39236m2xbo.us-west-2.rds.amazonaws.com'
     db_name = 'canvas++'
-    """
-
-def create_connection(conn):
-    #cursor object
-    c=conn.cursor()
-    return c
+    db = connect_to_db(username, pw, host, db_name)
+    cur = create_cursor(db)
 
 
-def create_user_table(c,conn):
+def connect_to_db(username, pw, host, db_name):
+
+    db = MySQLdb.connect(host = host, user = username, passwd= pw, db = db_name )
+    return db
+
+def create_cursor(db):
+    cur = db.cursor()
+    return cur
+
+
+def create_user_table(cur):
+    sql = """CREATE TABLE USER(id INT(9) NOT NULL, name VARCHAR(30), account_id INT(9), """
     #create table for user
-    c.execute ('''CREATE TABLE users (id, name, account_id, enrollment_term_id)''')
+    #c.execute ('''CREATE TABLE users (id, name, account_id, enrollment_term_id)''')
     #save (commit) the changes to database
-    conn.commit()
+    #conn.commit()
+
+
 
 
 def insert_user(c, user, conn):
