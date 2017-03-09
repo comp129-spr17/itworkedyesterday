@@ -22,8 +22,11 @@ def create_cursor(db):
     return cur
 
 
-def create_user_table(cur):
-    sql = """CREATE TABLE USER(id INT(9) NOT NULL, name VARCHAR(30), account_id INT(9), """
+def create_user_table(cur, db):
+    sql = """CREATE TABLE USER(id VARCHAR(20) NOT NULL, name VARCHAR(30), account_id VARCHAR(20))"""
+    cur.execute(sql)
+    db.close()
+
     #create table for user
     #c.execute ('''CREATE TABLE users (id, name, account_id, enrollment_term_id)''')
     #save (commit) the changes to database
@@ -32,21 +35,36 @@ def create_user_table(cur):
 
 
 
-def insert_user(c, user, conn):
+def insert_user(cur, user, db):
+    sql = """INSERT INTO USER (id, name, account_id, enrollment_term_id) VALUES(user.id, user.name, user.id)"""
+    try:
+        #Execute the SQL command
+        cur.execute(sql)
+        #commit your changes in the database
+        db.commit()
+    except:
+        #Rollback in case there is an error
+        db.rollback()
+
+    #disconnect from server
+    db.close()
     #insert user into table
-    c.execute("INSERT INTO user VALUES (user.id, user.data, user.bio, user.avatar_url, user.login_id)")
+    #c.execute("INSERT INTO user VALUES (user.id, user.data, user.bio, user.avatar_url, user.login_id)")
     #save (commit) the changes to database
-    conn.commit()
+    #conn.commit()
 
 def access_user(c,user):
     #access user information from user table by user ID
-    c.execute('SELECT user.id FROM user')
+    #c.execute('SELECT user.id FROM user')
 
-def create_course_table(c, conn):
+def create_course_table(cur, db):
+    sql = """CREATE TABLE COURSES (canvas_id VARCHAR(20) NOT NULL, course_name VARCHAR(20) NOT NULL, associated_account VARCHAR(20), term VARCHAR(20) """
+    cur.execute(sql)
+    db.close()
     #create course table
-    c.execute('''CREATE TABLE courses (canvas_id, course_name, associated_account, term)''')
+    #c.execute('''CREATE TABLE courses (canvas_id, course_name, associated_account, term)''')
     #save (commit) the changes to databse
-    conn.commit()
+    #conn.commit()
 
 def insert_course(c, user, conn):
     #insert course into table
