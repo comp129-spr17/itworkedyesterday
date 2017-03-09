@@ -66,12 +66,25 @@ def create_course_table(cur, db):
     #save (commit) the changes to databse
     #conn.commit()
 
-def insert_course(c, user, conn):
+def insert_course(cur, user, db):
+    sql = """INSERT INTO COURSES (canvas_id, course_name, associated_account, term) VALUES (user.canvas_id, user.name, user.canvas_account, user.canvas_term)"""
+    try:
+        #Execute the SQL command
+        cur.execute(sql)
+        #commit your changes in the database
+        db.commit()
+    except:
+        #Rollback in case there is an error
+        db.rollback()
+
+    #disconnect from server
+    db.close()
+
     #insert course into table
     #need to pass in correct way to access this info about courses
-    c.execute("INSERT INTO courses (user.canvas_id, user.name, user.canvas_account, user.canvas_term")
+    #c.execute("INSERT INTO courses (user.canvas_id, user.name, user.canvas_account, user.canvas_term")
     #save(commit) the changes to database
-    conn.commit()
+    #conn.commit()
 
 def access_user_courses(c, user):
     c.execute('SELECT user.canvas_id FROM course')
