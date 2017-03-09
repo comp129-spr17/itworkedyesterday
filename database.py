@@ -78,7 +78,7 @@ def access_user(cur,db):
     #c.execute('SELECT user.id FROM user')
 
 def create_course_table(cur, db):
-    sql = """CREATE TABLE COURSES (canvas_id VARCHAR(20) NOT NULL, course_name VARCHAR(20) NOT NULL, associated_account VARCHAR(20), term VARCHAR(20) """
+    sql = """CREATE TABLE COURSES (canvas_id VARCHAR(20) NOT NULL, course_name VARCHAR(20) NOT NULL, account_id VARCHAR(20), enrollment_term_id VARCHAR(20) """
     cur.execute(sql)
     db.close()
     #create course table
@@ -106,7 +106,26 @@ def insert_course(cur, user, db):
     #save(commit) the changes to database
     #conn.commit()
 
-def access_user_courses(c, user):
-    c.execute('SELECT user.canvas_id FROM course')
+def access_user_courses(cur, db):
+    #Prepare SQ query to insert a record into the database
+    sql = "SELECT * FROM COURSES"
+    try:
+        #Execute the SQL command
+        cur.execute(sql)
+        #fetch all the rows in a list of lists
+        results = cur.fetchall()
+        for row in results:
+            canvas_id = row[0]
+            name = row[1]
+            canvas_account = row[2]
+            canvas_term = row[3]
+            print("Canvas ID: ", canvas_id, "Name: ", name, "Canvas Account: ", canvas_account, "Canvas Term: ", canvas_term)
+    except:
+        print("Error: unable to fetch data")
+
+    #disconnect
+    db.close()
+
+
 
 main()
