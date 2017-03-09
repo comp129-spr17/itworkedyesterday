@@ -23,7 +23,7 @@ def create_cursor(db):
 
 
 def create_user_table(cur, db):
-    sql = """CREATE TABLE USER(id VARCHAR(20) NOT NULL, name VARCHAR(30), account_id VARCHAR(20))"""
+    sql = """CREATE TABLE USER(id VARCHAR(20) NOT NULL, name VARCHAR(30), bio VARCHAR(20), avatar_url VARCHAR(30), login_id VARCHAR(30)"""
     cur.execute(sql)
     db.close()
 
@@ -36,7 +36,7 @@ def create_user_table(cur, db):
 
 
 def insert_user(cur, user, db):
-    sql = """INSERT INTO USER (id, name, account_id, enrollment_term_id) VALUES(user.id, user.name, user.id)"""
+    sql = """INSERT INTO USER (id, name, bio, avatar_url, login_id) VALUES(user.id, user.name, user.bio, user.avatar_url, user.login_id)"""
     try:
         #Execute the SQL command
         cur.execute(sql)
@@ -53,7 +53,27 @@ def insert_user(cur, user, db):
     #save (commit) the changes to database
     #conn.commit()
 
-def access_user(c,user):
+def access_user(cur,db):
+    sql = "SELECT * FROM USER"
+    try:
+        #Execute the SQL command
+        cur.execute(sql)
+        #fetch all the rows in a list of lists
+        results = cur.fetchall()
+        for row in results:
+            id = row[0]
+            name = row[1]
+            bio = row[2]
+            avatar_url = row[3]
+            login_id = row[4]
+            #print fetched result
+            print ("id= ", id, " name= ",name, " bio= ", bio, "avatar_url= ", avatar_url, "login_id= ", login_id)
+    except:
+        print("Error: unable to fetch data")
+    #disconnect from server
+    db.close()
+
+
     #access user information from user table by user ID
     #c.execute('SELECT user.id FROM user')
 
