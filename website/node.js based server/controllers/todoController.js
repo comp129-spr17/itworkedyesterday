@@ -7,6 +7,10 @@ var urlencodedParser = bodyParser.urlencoded({extended: false});
 module.exports = function(app){
 
 //request handlers
+app.get('/', function(req, res){
+  res.render('todo', {todos: data});
+});
+
 app.get('/todo', function(req, res){
   res.render('todo', {todos: data});
 });

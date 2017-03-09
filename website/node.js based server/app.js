@@ -1,6 +1,6 @@
 var express = require('express');
 var todoController = require('./controllers/todoController');
-var port = 9000;
+var port = 80;
 var app = express();
 
 //set up template engine
