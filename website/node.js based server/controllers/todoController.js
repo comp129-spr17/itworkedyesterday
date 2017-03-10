@@ -19,6 +19,10 @@ app.get('/login', function(req, res){
   res.render('login', {todos: data});
 });
 
+app.get('/register', function(req, res){
+  res.render('register', {todos: data});
+});
+
 app.get('/completed', function(req, res){
   res.render('completed', {todos: dataC});
 });
