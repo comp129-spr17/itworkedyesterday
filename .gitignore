@@ -91,3 +91,7 @@ ENV/
 # Alex's
 .idea/
 vcs.xml
+usertoken.txt
+*.pem
+*.ppk
+*~
