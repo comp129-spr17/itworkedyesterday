@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from tasks.views import view_tasks
+from tasks.views import view_tasks, view_completed
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^tasks/$', view_tasks)
+    url(r'^tasks/$', view_tasks),
+    url(r'^tasks/completed/$', view_completed)
 ]

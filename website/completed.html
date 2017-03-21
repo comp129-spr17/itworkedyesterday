@@ -34,26 +34,27 @@
 				        <li class="active"><a href="#">Completed</a><span class="sr-only">(current)</span></li>
 				        <li><a href="index.html">Log Out</a></li>
 				      </ul>
-				      
+
 				    </div><!-- /.navbar-collapse -->
 				  </div><!-- /.container-fluid -->
 				</nav>
-			
+
 		</header>
 
 		<div class="listContainer">
+			<p>Welcome, {{username}}.</p><p><img src={{ imgurl }} alt= {{ username }} height="100" width="100"></p>
 			<div class="heading">List</div>
 			<div class="list">
 				<div class="task">
 					Test on 2/10
-					<div class="showOnHover"> 
+					<div class="showOnHover">
 						<a href="#" class="btn btn-xs btn-warning">Edit</a>
 						<a href="#" class="btn btn-xs btn-danger">Delete</a>
 					</div>
 				</div>
 				<div class="task">
 					Buy a cat
-					<div class="showOnHover"> 
+					<div class="showOnHover">
 						<a href="#" class="btn btn-xs btn-warning">Edit</a>
 						<a href="#" class="btn btn-xs btn-danger">Delete</a>
 					</div>
@@ -61,10 +62,5 @@
 
 			</div>
 		</div>
-
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<!-- Latest compiled and minified JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	</body>
 </html>
