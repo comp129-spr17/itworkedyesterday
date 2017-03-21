@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class DB_User(models.Model):
     username = models.CharField(max_length=16)
     canvas_token = models.CharField(max_length=256)
