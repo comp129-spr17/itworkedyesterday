@@ -16,12 +16,13 @@ import json
 import pprint
 import codecs
 import unittest
+import sys
 
 '''Global variables'''
 reader = codecs.getreader('utf-8')  # This exists to help the json and urllib libraries work together.
 pp = pprint.PrettyPrinter(indent=4)  # Print out larger, data objects in a readable manner.
 service_url = "https://pacific.instructure.com/api/v1/"  # The site that we're pulling our data from.
-
+unittest_arg = 'd'
 
 class RetrieveFromCanvasTest(unittest.TestCase):
 
@@ -98,16 +99,11 @@ class User:
         self.login_id = data['login_id']
         self.token = None
         self.ToDoLists = []
-        self.courses = None  # Maybe unneeded?
 
     def __str__(self):
         to_return = ''
         to_return += "User ID: {}\nFull Name: {}\nLogin ID: {}"\
             .format(self.id, self.name, self.login_id)
-        try:
-            to_return += "\nToken: {}".format(self.token)
-        except KeyError:
-            pass
         try:
             to_return += "\nBio: {}"\
                 .format(self.bio)
@@ -115,10 +111,12 @@ class User:
             pass
         try:
             to_return += "\nFavorite Courses: "
-            for course in self.courses:
-                to_return += "\n\t{}".format(course['name'])
-        except TypeError or KeyError:
-            pass
+            for course in self.ToDoLists:
+                to_return += "\n\t{}".format(course.name)
+        except TypeError:
+             logging.error('Unable to pull courses from User class: TypeError')
+        except KeyError:
+            logging.error('Unable to pull courses from User class: KeyError')
         return to_return
 
     def add(self, data):
@@ -127,10 +125,6 @@ class User:
             for course in data:
                 to_do_list = TodoList(course, self.id)
                 self.ToDoLists.append(to_do_list)
-            ''' Add in at your own risk, prints all assignments and all corresponding data
-            for course in self.ToDoLists:
-                print(course)
-            '''
         # If the data is a string, the data is the user token
         elif type(data) is str:
             self.token = data
@@ -270,8 +264,11 @@ def time_estimate():
     return input_time
 
 def main():
+    global unittest_arg
     global user_token  # The token used to authenticate the user.
-    unittest.main(exit=False)
+    if 'd' in sys.argv:
+        sys.argv.remove('d')
+        unittest.main(exit=True)
     user_token = get_user_token()
     user_data = get_user()
     user = User(user_data)
