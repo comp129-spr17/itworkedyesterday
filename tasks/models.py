@@ -2,10 +2,10 @@ from django.db import models
 
 
 class DB_User(models.Model):
-    username = models.CharField(max_length=16)
-    canvas_token = models.CharField(max_length=256)
-    canvas = models.CharField(max_length=256)
-    canvas_avatar_url = models.CharField(max_length=256)
+    username = models.CharField(max_length=16, blank=False)
+    canvas_token = models.CharField(max_length=256, blank=True)
+    canvas_id = models.CharField(max_length=256, blank=True)
+    canvas_avatar_url = models.CharField(max_length=256, blank=True)
 
 
 class DB_TodoList(models.Model):
