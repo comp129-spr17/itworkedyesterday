@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Tasks</title>
+		<!-- for jquery -->
+		<link href="styles/main.css" rel="stylesheet" />
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	</head>
+
+	<body>
+		<header class="navbar-inverse" role="banner">
+				<nav role="navigation">
+				  <div class="container-fluid">
+				    <!-- Brand and toggle get grouped for better mobile display -->
+				    <div class="navbar-header">
+				      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				        <span class="sr-only">Toggle navigation</span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				      </button>
+				      <a class="navbar-brand" href="#">Canvas++</a>
+				    </div>
+
+				    <!-- Collect the nav links, forms, and other content for toggling -->
+				    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				      <ul class="nav navbar-nav">
+				        <li class="active"><a href="#">Tasks<span class="sr-only">(current)</span></a></li>
+				        <li><a href="completed">Completed</a></li>
+				        <li><a href="login">Log Out</a></li>
+				      </ul>
+
+				    </div><!-- /.navbar-collapse -->
+				  </div><!-- /.container-fluid -->
+				</nav>
+		</header>
+
+		<div class="listContainer">
+			<div class="heading">
+				List
+				<!-- Trigger the modal with a button -->
+				<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" id="newButton">New</button>
+
+				<!-- Modal -->
+				<div id="myModal" class="modal fade" role="dialog">
+				  <div class="modal-dialog">
+
+				    <!-- Modal content-->
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal">&times;</button>
+				        <h4 class="modal-title">New Task</h4>
+				      </div>
+				      <div class="modal-body">
+								<div class="input-group">
+						  		<input type="text" class="form-control" placeholder="Task Title" aria-describedby="basic-addon1" id="titleInput">
+								</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-success" data-dismiss="modal" id="createButton">Create</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
+				<ul id="todoList">
+					<!-- Allows to get the data list from the javascript controller -->
+          {%for item in todos%}
+						<div class="taskText">
+	            <li id="onHover">{{item.task_name}}</li>
+		          <div class="showOnHover">
+								<a href="#" class="btn btn-xs btn-success">Completed</a>
+								<a href="#" class="btn btn-xs btn-warning">Edit</a>
+								<a href="#" class="btn btn-xs btn-danger">Delete</a>
+							</div>
+						</div>
+          <% } %>
+
+					<!-- Modal edit task-->
+					<div id="editModal" class="modal fade" role="dialog">
+					  <div class="modal-dialog">
+					    <!-- Modal content-->
+					    <div class="modal-content">
+					      <div class="modal-header">
+					        <button type="button" class="close" data-dismiss="modal">&times;</button>
+					        <h4 class="modal-title">New Task</h4>
+					      </div>
+					      <div class="modal-body">
+									<div class="input-group">
+							  		<input type="text" class="form-control" placeholder="Task Title" aria-describedby="basic-addon1" id="editInput">
+									</div>
+					      </div>
+					      <div class="modal-footer">
+					        <button type="button" class="btn btn-warning" data-dismiss="modal" id="editButton">Edit Task</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+
+				</ul>
+		</div>
+	</body>
+</html>
