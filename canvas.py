@@ -127,8 +127,10 @@ class User:
             for course in data:
                 to_do_list = TodoList(course, self.id)
                 self.ToDoLists.append(to_do_list)
+            ''' Add in at your own risk, prints all assignments and all corresponding data
             for course in self.ToDoLists:
                 print(course)
+            '''
         # If the data is a string, the data is the user token
         elif type(data) is str:
             self.token = data
@@ -172,7 +174,7 @@ class TodoList:
 
 class Assignment_Task:
     def __init__(self, data, user_id):
-        print(data)
+        # print(data)
         self.assignment = data['name']
         self.description = data['description']
         self.due_at = data['due_at']
