@@ -9,6 +9,7 @@ from tasks.models import DB_User, DB_TodoList, DB_Tasks
 # user = DB_User.objects.get(username="Sterling_Archer")
 user = DB_User.objects.get(username="Arthur_Dent")
 
+
 def view_tasks(request):
     f = open('html/tasks.html')
     template = get_template('tasks.html')
@@ -23,3 +24,18 @@ def view_completed(request):
     context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=True), 'username': user.username, 'imgurl': user.canvas_avatar_url})
     html = template.render(context)
     return HttpResponse(html)
+
+
+def removed_task(request, source, user_id, task_id):
+    
+
+
+def complete_task(request, source, user_id, task_id):
+
+
+
+def edit_task(request, source, user_id, task_id, new_name):
+
+
+
+def add_task(request, source, user_id, list_id, new_task):

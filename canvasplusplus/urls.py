@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from tasks.views import view_tasks, view_completed
+from tasks import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^tasks/$', view_tasks),
-    url(r'^tasks/completed/$', view_completed)
+    url(r'^tasks/$', views.view_tasks),
+    url(r'^tasks/completed/$', views.view_completed),
+    url(r'^([.+/]?)rem/([0-9]+)/([0-9]+)$)', views.removed_task),
+    url(r'^([.+/]?)com/([0-9]+)/([0-9]+)$)', views.complete_task),
+    url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)$)/(.+)', views.edit_task),
+    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)$)/(.+)/$)', views.add_task)
 ]
