@@ -4,8 +4,8 @@
     <div class="showOnHover">
 
       <a href="/com/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-success">{% if item.completed %}Uncomplete{%else%}Complete{% endif %}</a>
-      <a href="/edt/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-warning">Edit</a>
-      <a href="/del/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-danger">Delete</a>
+      <a href="#" class="btn btn-xs btn-warning">Edit</a>
+      <a href="/rem/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-danger">Delete</a>
     </div>
   </div>
 {% endfor %}
