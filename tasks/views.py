@@ -75,3 +75,72 @@ def add_task(request, source, user_id, list_id, new_task):
     task = DB_Tasks(user_id, list_id, new_task)
     task.save()
     return handle_source(source)
+
+'''
+Task Sorting
+HOW-TO:
+@key: the value of the task to sort by (ex. 'start_time')
+@direction: enum of 'ascending' or 'descending'
+@completed/completed_val: Boolean value whether or not you want the completed or incomplete tasks
+'''
+
+def sort_todos(key, direction, completed_val):
+    f = open('html/tasks.html')
+    template = get_template('tasks.html')
+    if direction == 'descending':
+        k = '-' + key
+    elif direction == 'ascending':
+        k = key
+    else:
+        print('Error, direction should be \'ascending\' or \'descending\'')
+        k = None
+    todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(k)
+    context = Context({'todos': todos,
+                       'username': user.username,
+                       'imgurl': user.canvas_avatar_url,
+                       'list': get_template('list.html')})
+    html = template.render(context)
+    return HttpResponse(html)
+
+
+def sort_by_course(direction, completed):
+    key = 'todo_list'
+    return sort_todos(key,direction, completed)
+
+
+# TODO: detect whether or not grading_type is by: 'points', 'letter_grade', or 'gpa_scale'
+def sort_by_points(direction, completed):
+    key = 'points'
+    return sort_todos(key,direction, completed)
+
+
+def sort_by_start_time(direction, completed):
+    key = 'start_time'
+    return sort_todos(key,direction, completed)
+
+
+def sort_by_due_time(direction, completed):
+    key = 'end_time'
+    return sort_todos(key, direction, completed)
+
+
+def sort_by_category(direction, completed):
+    key = 'category'
+    return sort_todos(key, direction, completed)
+
+def sort_by_name(direction, completed):
+    key = 'name'
+    return sort_todos(key, direction, completed)
+
+def sort_by_point_type(direction, completed):
+    key = 'point_type'
+    return sort_todos(key, direction, completed)
+
+def sort_by_priority(direction, completed):
+    key = 'priority'
+    return sort_todos(key, direction, completed)
+
+def sort_by_manual_rank(direction, completed):
+    key = 'manual_rank'
+    return sort_todos(key, direction, completed)
+
