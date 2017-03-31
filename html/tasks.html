@@ -70,18 +70,8 @@
 				</div>
 			</div>
 				<ul id="todoList">
-					<!-- Allows to get the data list from the javascript controller -->
-          {%for item in todos%}
-						<div class="taskText">
-	            <li id="onHover">{{item.task_name}}</li>
-		          <div class="showOnHover">
-								<a href="#" class="btn btn-xs btn-success">Completed</a>
-								<a href="#" class="btn btn-xs btn-warning">Edit</a>
-								<a href="#" class="btn btn-xs btn-danger">Delete</a>
-							</div>
-						</div>
-          {% endfor %}
-
+					{% comment %} The following line is replaced with the contents of list.html {% endcomment %}
+          {% include list %}
 					<!-- Modal edit task-->
 					<div id="editModal" class="modal fade" role="dialog">
 					  <div class="modal-dialog">
