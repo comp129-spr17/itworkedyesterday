@@ -7,8 +7,8 @@ from tasks.models import DB_User, DB_TodoList, DB_Tasks
 
 # Create your views here.
 
-# user = DB_User.objects.get(username="Sterling_Archer")
-user = DB_User.objects.get(username="Arthur_Dent")
+user = DB_User.objects.get(username="Sterling_Archer")
+# user = DB_User.objects.get(username="Arthur_Dent")
 
 
 def view_tasks(request):
@@ -143,4 +143,3 @@ def sort_by_priority(direction, completed):
 def sort_by_manual_rank(direction, completed):
     key = 'manual_rank'
     return sort_todos(key, direction, completed)
-
