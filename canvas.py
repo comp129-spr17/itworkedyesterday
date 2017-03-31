@@ -15,73 +15,12 @@ import logging
 import json
 import pprint
 import codecs
-import unittest
 import sys
 
 '''Global variables'''
 reader = codecs.getreader('utf-8')  # This exists to help the json and urllib libraries work together.
 pp = pprint.PrettyPrinter(indent=4)  # Print out larger, data objects in a readable manner.
 service_url = "https://pacific.instructure.com/api/v1/"  # The site that we're pulling our data from.
-unittest_arg = 'd'
-
-class RetrieveFromCanvasTest(unittest.TestCase):
-
-    # Test to see if able to retrieve token from file
-    def test_a_obtain_token(self):
-        self.token = None
-        try:
-            token_file = open('usertoken.txt', 'r')
-            self.token = token_file.read()
-            token_file.close()
-        except:
-            pass
-        self.assertIsNotNone(self.token)
-
-    # Test to see if able to retrieve at least one class from canvas
-    def test_b_has_courses(self):
-        global user_token
-        user_token = None
-        self.courses = []
-        try:
-            token_file = open('usertoken.txt', 'r')
-            user_token = token_file.read()
-            token_file.close()
-        except:
-            pass
-        try:
-            self.courses = get_favorite_courses()
-        except:
-            pass
-        self.assertIsNotNone(user_token)
-        self.assertGreater(len(self.courses), 0)
-
-    # Test to see if able to pull at least one assignment from canvas
-    def test_c_has_assignments(self):
-        global user_token
-        user_token = None
-        self.courses = []
-        try:
-            token_file = open('usertoken.txt', 'r')
-            user_token = token_file.read()
-            token_file.close()
-        except:
-            pass
-        try:
-            self.courses = get_favorite_courses()
-        except:
-            pass
-        self.assignments = []
-        try:
-            for course in self.courses:
-                self.course_assignments = get_assignments(str(course['id']))
-                for assignment in self.course_assignments:
-                    self.assignments.append(assignment)
-        except:
-            pass
-        self.assertIsNotNone(user_token)
-        self.assertIsNotNone(self.courses)
-        self.assertGreater(len(self.assignments), 0)
-
 
 class Service(Enum):
     ORIGINAL = 0
@@ -264,11 +203,7 @@ def time_estimate():
     return input_time
 
 def main():
-    global unittest_arg
     global user_token  # The token used to authenticate the user.
-    if 'd' in sys.argv:
-        sys.argv.remove('d')
-        unittest.main(exit=True)
     user_token = get_user_token()
     user_data = get_user()
     user = User(user_data)
