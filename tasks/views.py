@@ -4,12 +4,31 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.template import Context
 from tasks.models import DB_User, DB_TodoList, DB_Tasks
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+
+
+from tasks.forms import SignUpForm
 
 # Create your views here.
 
 user = DB_User.objects.get(username="Sterling_Archer")
 # user = DB_User.objects.get(username="Arthur_Dent")
 
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
 
 def view_tasks(request):
     f = open('html/tasks.html')
