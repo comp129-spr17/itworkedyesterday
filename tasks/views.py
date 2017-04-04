@@ -117,7 +117,7 @@ def sort_todos(request, key, direction, completed_val):
     else:
         print('Error, direction should be \'ascending\' or \'descending\'')
         key = None
-    todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(k)
+    todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(key)
     context = Context({'todos': todos,
                        'username': user.username,
                        'imgurl': user.canvas_avatar_url,
