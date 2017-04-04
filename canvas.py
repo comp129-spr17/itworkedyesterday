@@ -112,13 +112,13 @@ class Assignment_Task:
         self.description = data['description']
         self.due_at = data['due_at']
         self.course_id = data['course_id']
-        self.course_id = data['points_possible']
+        self.points_possible = data['points_possible']
         self.user_id = user_id
 
     def __str__(self):
         to_return = ''
         to_return += "Course ID: {}\nAssignment: {}\nDescription: {}\nDue Date: {}\nPoints: {}\n"\
-                .format(self.course_id, self.assignment,self.description, self.due_at, self.course_id)
+                .format(self.course_id, self.assignment,self.description, self.due_at, self.points_possible)
         return to_return
 
 
