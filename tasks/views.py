@@ -6,6 +6,7 @@ from django.template import Context
 from tasks.models import DB_User, DB_TodoList, DB_Tasks
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from enum import Enum
 
 
 from tasks.forms import SignUpForm
@@ -15,6 +16,9 @@ from tasks.forms import SignUpForm
 user = DB_User.objects.get(username="Sterling_Archer")
 # user = DB_User.objects.get(username="Arthur_Dent")
 
+class Direction(Enum):
+    ASCENDING = 0
+    DESCENDING = 1
 
 def signup(request):
     if request.method == 'POST':
@@ -103,12 +107,12 @@ HOW-TO:
 @completed/completed_val: Boolean value whether or not you want the completed or incomplete tasks
 '''
 
-def sort_todos(key, direction, completed_val):
+def sort_todos(request, key, direction, completed_val):
     f = open('html/tasks.html')
     template = get_template('tasks.html')
-    if direction == 'descending':
+    if direction == Direction.DESCENDING:
         key = '-' + key
-    elif direction == 'ascending':
+    elif direction == Direction.ASCENDING:
         key = key
     else:
         print('Error, direction should be \'ascending\' or \'descending\'')
@@ -122,34 +126,34 @@ def sort_todos(key, direction, completed_val):
     return HttpResponse(html)
 
 
-def sort_by_course(direction, completed):
-    return sort_todos('todo_list',direction, completed)
+def sort_by_course(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request, 'todo_list',direction, completed)
 
 
 # TODO: detect whether or not grading_type is by: 'points', 'letter_grade', or 'gpa_scale'
-def sort_by_points(direction, completed):
-    return sort_todos('points',direction, completed)
+def sort_by_points(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'points',direction, completed)
 
 
-def sort_by_start_time(direction, completed):
-    return sort_todos('start_time',direction, completed)
+def sort_by_start_time(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'start_time',direction, completed)
 
 
-def sort_by_due_time(direction, completed):
-    return sort_todos('end_time', direction, completed)
+def sort_by_due_time(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'end_time', direction, completed)
 
 
-def sort_by_category(direction, completed):
-    return sort_todos('category', direction, completed)
+def sort_by_category(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'category', direction, completed)
 
-def sort_by_name(direction, completed):
-    return sort_todos('name', direction, completed)
+def sort_by_name(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'name', direction, completed)
 
-def sort_by_point_type(direction, completed):
-    return sort_todos('point_type', direction, completed)
+def sort_by_point_type(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'point_type', direction, completed)
 
-def sort_by_priority(direction, completed):
-    return sort_todos('priority', direction, completed)
+def sort_by_priority(request, direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'priority', direction, completed)
 
-def sort_by_manual_rank(direction, completed):
-    return sort_todos('manual_rank', direction, completed)
+def sort_by_manual_rank(direction=Direction.ASCENDING, completed=False):
+    return sort_todos(request,'manual_rank', direction, completed)
