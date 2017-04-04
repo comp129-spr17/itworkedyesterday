@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'root',
         'PASSWORD': 'password',
-        'HOST': 'cppdb.c1plntkoobsn.us-west-2.rds.amazonaws.com',
+        'HOST': 'canvasplusplus.c1plntkoobsn.us-west-2.rds.amazonaws.com',
         'PORT': '5432'
     }
 }
