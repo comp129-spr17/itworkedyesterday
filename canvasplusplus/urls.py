@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^admin/', admin.site.urls),
-    url(r'^tasks/$', views.sort_by_due_time),
+    url(r'^tasks/$', views.sort_by_name),
     url(r'^tasks/completed/$', views.view_completed),
     url(r'^([.+/]?)rem/([0-9]+)/([0-9]+)/$', views.removed_task),
     url(r'^([.+/]?)com/([0-9]+)/([0-9]+)/$', views.complete_task),

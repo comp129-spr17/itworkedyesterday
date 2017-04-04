@@ -127,7 +127,7 @@ def sort_todos(request, key, direction, completed_val):
 
 
 def sort_by_course(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request, 'todo_list',direction, completed)
+    return sort_todos(request, 'todo_list_id',direction, completed)
 
 
 # TODO: detect whether or not grading_type is by: 'points', 'letter_grade', or 'gpa_scale'
@@ -147,7 +147,7 @@ def sort_by_category(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'category', direction, completed)
 
 def sort_by_name(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'name', direction, completed)
+    return sort_todos(request,'task_name', direction, completed)
 
 def sort_by_point_type(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'point_type', direction, completed)
