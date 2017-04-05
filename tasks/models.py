@@ -1,11 +1,12 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class DB_User(models.Model):
     username = models.CharField(max_length=16, blank=False)
     canvas_token = models.CharField(max_length=256, blank=True)
     canvas_id = models.CharField(max_length=256, blank=True)
     canvas_avatar_url = models.CharField(max_length=256, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
 
 class DB_TodoList(models.Model):

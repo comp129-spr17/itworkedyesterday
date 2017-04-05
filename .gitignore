@@ -95,3 +95,5 @@ usertoken.txt
 *.pem
 *.ppk
 *~
+tasks/migrations/
+database.json

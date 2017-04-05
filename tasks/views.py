@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.template.loader import get_template
 from django.template import Context
 from tasks.models import DB_User, DB_TodoList, DB_Tasks
@@ -13,12 +13,13 @@ from tasks.forms import SignUpForm
 
 # Create your views here.
 
-user = DB_User.objects.get(username="Sterling_Archer")
+# user = DB_User.objects.get(username="Sterling_Archer")
 # user = DB_User.objects.get(username="Arthur_Dent")
 
 class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
+
 
 def signup(request):
     if request.method == 'POST':
@@ -34,26 +35,33 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
+
 def view_tasks(request):
-    f = open('html/tasks.html')
-    template = get_template('tasks.html')
-    context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=False),
-                       'username': user.username,
-                       'imgurl': user.canvas_avatar_url,
-                       'list': get_template('list.html')})
-    html = template.render(context)
-    return HttpResponse(html)
+    if request.user.is_authenticated:
+        template = get_template('tasks.html')
+        user = DB_User.objects.get(user=request.user.id)
+        context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=False),
+                           'username': user.username,
+                           'imgurl': user.canvas_avatar_url,
+                           'list': get_template('list.html')})
+        html = template.render(context)
+        return HttpResponse(html)
+    else:
+        return redirect('/login/')
 
 
 def view_completed(request):
-    f = open('html/tasks.html')
-    template = get_template('completed.html')
-    context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=True),
-                       'username': user.username,
-                       'imgurl': user.canvas_avatar_url,
-                       'list': get_template('list.html')})
-    html = template.render(context)
-    return HttpResponse(html)
+    if request.user.is_authenticated:
+        template = get_template('completed.html')
+        user = DB_User.objects.get(user=request.user.id)
+        context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=True),
+                           'username': user.username,
+                           'imgurl': user.canvas_avatar_url,
+                           'list': get_template('list.html')})
+        html = template.render(context)
+        return HttpResponse(html)
+    else:
+        return redirect('/login/')
 
 
 def handle_source(source):
@@ -108,22 +116,25 @@ HOW-TO:
 '''
 
 def sort_todos(request, key, direction, completed_val):
-    f = open('html/tasks.html')
-    template = get_template('tasks.html')
-    if direction == Direction.DESCENDING:
-        key = '-' + key
-    elif direction == Direction.ASCENDING:
-        key = key
+    if request.user.is_authenticated:
+        template = get_template('tasks.html')
+        user = DB_User.objects.get(user=request.user.id)
+        if direction == Direction.DESCENDING:
+            key = '-' + key
+        elif direction == Direction.ASCENDING:
+            key = key
+        else:
+            print('Error, direction should be \'ascending\' or \'descending\'')
+            key = None
+        todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(key)
+        context = Context({'todos': todos,
+                           'username': user.username,
+                           'imgurl': user.canvas_avatar_url,
+                           'list': get_template('list.html')})
+        html = template.render(context)
+        return HttpResponse(html)
     else:
-        print('Error, direction should be \'ascending\' or \'descending\'')
-        key = None
-    todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(key)
-    context = Context({'todos': todos,
-                       'username': user.username,
-                       'imgurl': user.canvas_avatar_url,
-                       'list': get_template('list.html')})
-    html = template.render(context)
-    return HttpResponse(html)
+        return redirect('/login/')
 
 
 def sort_by_course(request, direction=Direction.ASCENDING, completed=False):
@@ -146,14 +157,18 @@ def sort_by_due_time(request, direction=Direction.ASCENDING, completed=False):
 def sort_by_category(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'category', direction, completed)
 
+
 def sort_by_name(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'task_name', direction, completed)
+
 
 def sort_by_point_type(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'point_type', direction, completed)
 
+
 def sort_by_priority(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'priority', direction, completed)
+
 
 def sort_by_manual_rank(direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'manual_rank', direction, completed)
