@@ -82,8 +82,11 @@ class TodoList:
         assignments = get_assignments(str(data['id'])) # data id is the course id
         self.assignment_tasks = []
         self.user_id = user_id
+        self.total = 0
         for assignment in assignments:
             todo = Assignment_Task(assignment, user_id)
+            self.total += int(assignment['points_possible'])
+
             self.assignment_tasks.append(todo)
 
     def __str__(self):
@@ -210,7 +213,7 @@ def main():
     user = User(user_data)
     user.add(get_favorite_courses())
     user.add(user_token)
-    '''
+    course_data = get_favorite_courses()
     pp.pprint(course_data)
     time_needed = time_estimate()
     print('\"Active\" Courses:')
@@ -218,11 +221,13 @@ def main():
         print('\t', course['name'])
     print('Favorite Courses:')
     # Print Favorite Courses
-    for favorite_course in favorite_course_data:
+    for favorite_course in course_data:
+        #total = 0
         print('\t', favorite_course['name'])
         print('\t\t','Assignments From Course:')
         assignments_data = get_assignments(str(favorite_course['id']))
         # Print assignments in course
+
         for assignments in assignments_data:
             print('\t\t\t', assignments['name'])
 
@@ -233,10 +238,12 @@ def main():
             print('\t\t\t\t', 'Available: ', assignments['unlock_at'], 'to', assignments['lock_at'])
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
             print('\t\t\t\t', 'Points Possible: ', assignments['points_possible'])
+            #total += int(assignments['points_possible'])
             print('\t\t\t\t', 'Grading Type: ', assignments['grading_type'])
             print('\t\t\t\t', 'Time Needed to Complete: ', time_needed[favorite_course['name']], " minutes")
-    '''
+        #print(favorite_course['name'], " Total Points: ", total)
     print("\nUser Object string output:")
     print(user)
+
 
 main()
