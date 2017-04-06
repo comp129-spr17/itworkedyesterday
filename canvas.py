@@ -69,7 +69,10 @@ class User:
             self.token = data
         else:
             logging.debug("Data type not recognized")
-
+    def display(self):
+        for course in self.ToDoLists:
+            for assignment in course.assignment_tasks:
+                print(assignment.assignment, ": " ,assignment.weight)
 
 '''Pass in a Course object as data.'''
 class TodoList:
@@ -86,8 +89,10 @@ class TodoList:
         for assignment in assignments:
             todo = Assignment_Task(assignment, user_id)
             self.total += int(assignment['points_possible'])
-
             self.assignment_tasks.append(todo)
+        for assignment in self.assignment_tasks:
+            assignment.total_points = self.total
+            assignment.calc_weight()
 
     def __str__(self):
         to_return = ''
@@ -116,7 +121,14 @@ class Assignment_Task:
         self.due_at = data['due_at']
         self.course_id = data['course_id']
         self.points_possible = data['points_possible']
+        self.total_points=0
+        self.weight = 0
         self.user_id = user_id
+
+
+    def calc_weight(self):
+        self.weight= (self.points_possible/self.total_points)*100
+
 
     def __str__(self):
         to_return = ''
@@ -221,6 +233,7 @@ def main():
         print('\t', course['name'])
     print('Favorite Courses:')
     # Print Favorite Courses
+    '''
     for favorite_course in course_data:
         #total = 0
         print('\t', favorite_course['name'])
@@ -239,9 +252,12 @@ def main():
             print('\t\t\t\t', 'Due: ', assignments['due_at'])
             print('\t\t\t\t', 'Points Possible: ', assignments['points_possible'])
             #total += int(assignments['points_possible'])
+            print('\t\t\t\t', 'Assignment Weight: ', assignments.weight)
             print('\t\t\t\t', 'Grading Type: ', assignments['grading_type'])
             print('\t\t\t\t', 'Time Needed to Complete: ', time_needed[favorite_course['name']], " minutes")
         #print(favorite_course['name'], " Total Points: ", total)
+    '''
+    user.display()
     print("\nUser Object string output:")
     print(user)
 
