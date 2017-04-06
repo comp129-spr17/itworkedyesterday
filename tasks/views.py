@@ -13,9 +13,6 @@ from tasks.forms import SignUpForm
 
 # Create your views here.
 
-# user = DB_User.objects.get(username="Sterling_Archer")
-# user = DB_User.objects.get(username="Arthur_Dent")
-
 class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1

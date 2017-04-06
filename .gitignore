@@ -89,6 +89,7 @@ ENV/
 .ropeproject
 
 # Alex's
+.idea/*
 .idea/
 vcs.xml
 usertoken.txt
