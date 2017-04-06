@@ -25,7 +25,10 @@ SECRET_KEY = '9!204oposni+xa_$zc52_v3l=pjg*hirx*^qptyu(_(dsf7tmj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'canvasplusplus.me',
+    '54.219.130.19'
+]
 
 LOGIN_REDIRECT_URL = '/tasks/'
 
