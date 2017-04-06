@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpRequest
 from django.template.loader import get_template
 from django.template import Context
 from tasks.models import DB_User, DB_TodoList, DB_Tasks
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
 
