@@ -1,9 +1,9 @@
-.class { 
-	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+.class {
+	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif;
 }
 
 .navbar-inverse, .signInContainer{
-	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif;
 	font-size: 17px;
 	font-style: normal;
 	font-variant: normal;
@@ -24,7 +24,7 @@
 	border-radius: 5px;
 	box-shadow: 0px 0px 4px #ccc;
 	margin: 3%;
-	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif;
 	font-size: 17px;
 	font-style: normal;
 	font-variant: normal;
@@ -88,4 +88,12 @@
 #todoList li:hover #taskOptions{
 	display: inline-block;
 	float: right;
+}
+
+.listContainer .heading .dropdown{
+	display: inline-block;
+	float: right;
+	padding: 10px;
+	margin-right: 100px;
+
 }
