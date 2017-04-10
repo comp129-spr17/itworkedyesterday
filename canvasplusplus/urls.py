@@ -29,5 +29,10 @@ urlpatterns = [
     url(r'^([.+/]?)rem/([0-9]+)/([0-9]+)/$', views.removed_task),
     url(r'^([.+/]?)com/([0-9]+)/([0-9]+)/$', views.complete_task),
     url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)$/(.+)/$', views.edit_task),
-    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)$/(.+)/$', views.add_task)
+    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)$/(.+)/$', views.add_task),
+    url(r'^tasks/sort_by_points/$', views.sort_by_points),
+    url(r'^tasks/sort_by_start_time/$', views.sort_by_start_time),
+    url(r'^tasks/sort_by_due_time/$', views.sort_by_due_time),
+    url(r'^tasks/sort_by_name/$', views.sort_by_name),
+    url(r'^tasks/sort_by_priority/$', views.sort_by_priority)
 ]
