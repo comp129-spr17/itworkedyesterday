@@ -42,25 +42,37 @@
 				</nav>
 		</header>
 		<p>Welcome, {{username}}.</p><p><img src={{ imgurl }} alt= {{ username }} height="100" width="100"></p>
+
 		<div class="listContainer">
 
-			<div class="heading">
-				List
-				<!-- Trigger the modal with a button -->
-				<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" id="newButton">New</button>
-				<div class="dropdown" id="dropdownmenu_">
-					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						Sorting
-					<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-							<li><a href="sort_by_points">Points</a></li>
-							<li><a href="sort_by_start_time">Start Time</a></li>
-							<li><a href="sort_by_due_time">End Time</a></li>
-							<li><a href="sort_by_name">Name</a></li>
-							<li><a href="sort_by_priority">Priority</a></li>
-					</ul>
-				</div>
+			<nav class="navbar navbar-inverse" id="listnav">
+			  <div class="container-fluid">
+			    <div class="navbar-header">
+			      <a class="navbar-brand" href="#">
+							List
+			      </a>
+						<ul id="navlist1">
+							<li>
+							<div class="dropdown" id="dropdownmenu_">
+								<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									Sorting
+								<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+										<li><a href="sort_by_points">Points</a></li>
+										<li><a href="sort_by_start_time">Start Time</a></li>
+										<li><a href="sort_by_due_time">End Time</a></li>
+										<li><a href="sort_by_name">Name</a></li>
+										<li><a href="sort_by_priority">Priority</a></li>
+								</ul>
+							</div>
+							</li>
+							<li><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" id="newButton">New</button></li>
+						</ul>
+					 </div>
+			  </div>
+			</nav>
+
 				<!-- Modal -->
 				<div id="myModal" class="modal fade" role="dialog">
 				  <div class="modal-dialog">
@@ -83,8 +95,6 @@
 				  </div>
 				</div>
 
-
-			</div>
 				<ul id="todoList">
 					{% comment %} The following line is replaced with the contents of list.html {% endcomment %}
           {% include list %}

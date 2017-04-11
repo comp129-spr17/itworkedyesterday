@@ -27,8 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'canvasplusplus.me',
-    '54.219.130.19',
-    '127.0.0.1'
+    '54.219.130.19'
 ]
 
 LOGIN_REDIRECT_URL = '/tasks/'
