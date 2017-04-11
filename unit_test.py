@@ -27,7 +27,7 @@ class RetrieveFromCanvasTest(unittest.TestCase):
         except:
             pass
         try:
-            self.courses = canvas.get_favorite_courses()
+            self.courses = canvas.get_favorite_courses(user_token)
         except:
             pass
         self.assertIsNotNone(user_token)
@@ -45,13 +45,13 @@ class RetrieveFromCanvasTest(unittest.TestCase):
         except:
             pass
         try:
-            self.courses = canvas.get_favorite_courses()
+            self.courses = canvas.get_favorite_courses(user_token)
         except:
             pass
         self.assignments = []
         try:
             for course in self.courses:
-                self.course_assignments = canvas.get_assignments(str(course['id']))
+                self.course_assignments = canvas.get_assignments(str(course['id']),user_token)
                 # print(self.course_assignments)
                 for assignment in self.course_assignments:
                     self.assignments.append(assignment)
@@ -84,6 +84,14 @@ class WebsiteDependencyTest(unittest.TestCase):
         self.imported = None
         try:
             import virtualenv
+            self.imported = True
+        except:
+            self.imported = False
+        self.assertTrue(self.imported)
+    def test_if_bs4_imported(self):
+        self.imported = None
+        try:
+            import bs4
             self.imported = True
         except:
             self.imported = False
