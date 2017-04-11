@@ -33,34 +33,6 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-def view_tasks(request):
-    if request.user.is_authenticated:
-        template = get_template('tasks.html')
-        user = DB_User.objects.get(user=request.user.id)
-        context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=False),
-                           'username': user.username,
-                           'imgurl': user.canvas_avatar_url,
-                           'list': get_template('list.html')})
-        html = template.render(context)
-        return HttpResponse(html)
-    else:
-        return redirect('/login/')
-
-
-def view_completed(request):
-    if request.user.is_authenticated:
-        template = get_template('completed.html')
-        user = DB_User.objects.get(user=request.user.id)
-        context = Context({'todos': DB_Tasks.objects.filter(user=user.id, completed=True),
-                           'username': user.username,
-                           'imgurl': user.canvas_avatar_url,
-                           'list': get_template('list.html')})
-        html = template.render(context)
-        return HttpResponse(html)
-    else:
-        return redirect('/login/')
-
-
 def handle_source(source):
     if source != "":
         return redirect(source)
@@ -124,12 +96,17 @@ def sort_todos(request, key, direction, completed_val):
             print('Error, direction should be \'ascending\' or \'descending\'')
             key = None
         todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(key)
-        context = Context({'todos': todos,
+        # context = Context({'todos': todos,
+        #                    'username': user.username,
+        #                    'imgurl': user.canvas_avatar_url,
+        #                    'list': get_template('list.html')})
+        # # html = template.render(context)
+        return render(request, 'tasks.html', {'todos': todos,
+                            'completed': completed_val,
                            'username': user.username,
                            'imgurl': user.canvas_avatar_url,
                            'list': get_template('list.html')})
-        html = template.render(context)
-        return HttpResponse(html)
+        # return HttpResponse(html)
     else:
         return redirect('/login/')
 
