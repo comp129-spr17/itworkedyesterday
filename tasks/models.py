@@ -48,3 +48,4 @@ class DB_Tasks(models.Model):
     completed = models.BooleanField(blank=True)
     priority = models.IntegerField(blank=True)
     manual_rank = models.IntegerField(blank=True)
+    point_priority = models.FloatField(null=True)
