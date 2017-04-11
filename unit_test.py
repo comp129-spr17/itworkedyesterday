@@ -97,8 +97,8 @@ class WebsiteDependencyTest(unittest.TestCase):
             self.imported = False
         self.assertTrue(self.imported)
 
-if __name__ == '__main__':
-    alltests = unittest.TestSuite()
-    alltests.addTest(unittest.makeSuite(RetrieveFromCanvasTest))
-    alltests.addTest(unittest.makeSuite(WebsiteDependencyTest))
-    results = unittest.TextTestRunner(verbosity=2).run(alltests)
+
+alltests = unittest.TestSuite()
+alltests.addTest(unittest.makeSuite(RetrieveFromCanvasTest))
+alltests.addTest(unittest.makeSuite(WebsiteDependencyTest))
+results = unittest.TextTestRunner(verbosity=2).run(alltests)
