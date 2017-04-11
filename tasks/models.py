@@ -16,14 +16,12 @@ class DB_User(models.Model):
 def update_user_profile(sender, instance, created, **kwargs):
     if created:
         DB_User.objects.create(user=instance, id=instance.id, username=instance.username)
-    instance.DB_User.save()
 
 
 @receiver(post_save, sender=DB_User)
 def make_default_list(sender, instance, created, **kwargs):
     if created:
         DB_TodoList.objects.create(owner=instance, name="{}'s Default List".format(instance.username), service="Default")
-    DB_TodoList.save()
 
 
 class DB_TodoList(models.Model):
