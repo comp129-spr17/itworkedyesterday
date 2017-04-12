@@ -11,6 +11,7 @@ import logging
 from enum import Enum
 from typing import Dict
 from bs4 import BeautifulSoup
+from tasks.models import DB_Tasks,DB_User,DB_Category,DB_TodoList
 import logging
 import json
 import pprint
@@ -226,6 +227,17 @@ def time_estimate(usertoken):
         input_time[course['name']] = time
     return input_time
 
+def add_assignments_DB(TodolistID, UserID):
+
+    user_token = get_user_token()
+    course_data = get_favorite_courses(user_token)
+    for favorite_course in course_data:
+
+        assignments_data = get_assignments(str(favorite_course['id']))
+        for assignments in assignments_data:
+            a = DB_Tasks(TodolistID,UserID,"1",assignments['name'],assignments['unlock_at'],assignments['due_at'],assignments['points_possible'],assignments['grading_type'],"f","","","")
+
+
 def main():
     global user_token  # The token used to authenticate the user.
     user_token = get_user_token()
@@ -235,7 +247,7 @@ def main():
     user.add(user_token)
     course_data = get_favorite_courses(user_token)
     #pp.pprint(course_data)
-    time_needed = time_estimate(user_token)
+    #time_needed = time_estimate(user_token)
     print('\"Active\" Courses:')
     for course in course_data:
         print('\t', course['name'])

@@ -30,6 +30,8 @@ def signup(request):
             return redirect('/login/')
     else:
         form = SignUpForm()
+    #if token:
+        #run from the canvas.py file with token as a param
     return render(request, 'signup.html', {'form': form})
 
 
