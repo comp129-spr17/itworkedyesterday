@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout, {'template_name': 'logout.html'}, name='logout'),
     url(r'^signup/$', views.signup, name='signup'),
+    url(r'^profile/', views.ProfileUpdate.as_view(), name='profile'),
     url(r'^admin/', admin.site.urls),
     url(r'^tasks/$', views.sort_by_name),
     url(r'^tasks/completed/$', views.sort_by_name, {'completed': True}),

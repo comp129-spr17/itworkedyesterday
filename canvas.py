@@ -10,7 +10,7 @@ from urllib import error as url_error
 import logging
 from enum import Enum
 from typing import Dict
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from tasks.models import DB_Tasks,DB_User,DB_Category,DB_TodoList
 import logging
 import json
@@ -285,6 +285,6 @@ def main():
             print('\t\t\t\t', 'Time Needed to Complete: ', time_needed[favorite_course['name']], " minutes")
         #print(favorite_course['name'], " Total Points: ", total)
     '''
-    user.display()
-    print("\nUser Object string output:")
-    print(user)
+#    user.display()
+ #   print("\nUser Object string output:")
+  #  print(user)
