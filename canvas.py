@@ -233,17 +233,16 @@ def get_avatar_url(user_token):
     return profile['avatar_url']
 
 def add_assignments_DB(TodolistID, UserID, user_token):
-
     course_data = get_favorite_courses(user_token)
     for favorite_course in course_data:
 
         assignments_data = get_assignments(str(favorite_course['id']),user_token)
         for assignments in assignments_data:
-            a = DB_Tasks(todo_list=TodolistID,user=UserID,task_name=assignments['name'],start_time=datetime, category=DB_Category.objects.get(id="1"),
+            if str(datetime.datetime.now().isoformat()) <= str(assignments['due_at']):
+                a = DB_Tasks(todo_list=TodolistID,user=UserID,task_name=assignments['name'],start_time=datetime, category=DB_Category.objects.get(id="1"),
                          end_time=assignments['due_at'],points=assignments['points_possible'],point_type=assignments['grading_type'],
                          completed="f")
-            a.save()
-
+                a.save()
 
 def main():
     global user_token  # The token used to authenticate the user.
@@ -255,10 +254,12 @@ def main():
     course_data = get_favorite_courses(user_token)
     #pp.pprint(course_data)
     #time_needed = time_estimate(user_token)
-    print('\"Active\" Courses:')
-    for course in course_data:
-        print('\t', course['name'])
-    print('Favorite Courses:')
+    course_data2 = get_favorite_courses(user_token)
+    for favorite_course in course_data2:
+
+        assignments_data = get_assignments(str(favorite_course['id']), user_token)
+        for assignments in assignments_data:
+            print(assignments['name'])
     # Print Favorite Courses
     '''
     for favorite_course in course_data:
@@ -287,5 +288,3 @@ def main():
     user.display()
     print("\nUser Object string output:")
     print(user)
-
-
