@@ -24,15 +24,9 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^admin/', admin.site.urls),
     url(r'^tasks/$', views.sort_by_name),
-   # url(r'^tasks/([.+])/((Direction.ASCENDING)|(Direction.DESCENDING))/((True)|(False)', views.sort_todos)
     url(r'^tasks/completed/$', views.view_completed),
     url(r'^([.+/]?)rem/([0-9]+)/([0-9]+)/$', views.removed_task),
     url(r'^([.+/]?)com/([0-9]+)/([0-9]+)/$', views.complete_task),
     url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)$/(.+)/$', views.edit_task),
-    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)$/(.+)/$', views.add_task),
-    url(r'^tasks/sort_by_points/$', views.sort_by_points),
-    url(r'^tasks/sort_by_start_time/$', views.sort_by_start_time),
-    url(r'^tasks/sort_by_due_time/$', views.sort_by_due_time),
-    url(r'^tasks/sort_by_name/$', views.sort_by_name),
-    url(r'^tasks/sort_by_priority/$', views.sort_by_priority)
+    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)$/(.+)/$', views.add_task)
 ]
