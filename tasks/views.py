@@ -7,7 +7,7 @@ from tasks.models import DB_User, DB_TodoList, DB_Tasks
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
-from canvas import add_assignments_DB
+from canvas import add_assignments_DB, get_user
 
 
 from tasks.forms import SignUpForm
@@ -30,7 +30,10 @@ def signup(request):
             login(request, user)
             t = DB_User.objects.get(username=form.cleaned_data.get('username'))
             t.canvas_token = form.cleaned_data.get('canvas_token')
+           # t.canvas_avatar_url = get_user(form.cleaned_data.get('canvas_token'))
             t.save()
+            todol = DB_TodoList.objects.get(owner=t.id)
+            add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
             return redirect('/login/')
 
     else:

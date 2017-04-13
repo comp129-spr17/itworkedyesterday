@@ -16,6 +16,7 @@ import logging
 import json
 import pprint
 import codecs
+import datetime
 import sys
 
 '''Global variables'''
@@ -227,15 +228,17 @@ def time_estimate(usertoken):
         input_time[course['name']] = time
     return input_time
 
-def add_assignments_DB(TodolistID, UserID):
+def add_assignments_DB(TodolistID, UserID, user_token):
 
-    user_token = get_user_token()
     course_data = get_favorite_courses(user_token)
     for favorite_course in course_data:
 
-        assignments_data = get_assignments(str(favorite_course['id']))
+        assignments_data = get_assignments(str(favorite_course['id']),user_token)
         for assignments in assignments_data:
-            a = DB_Tasks(TodolistID,UserID,"1",assignments['name'],assignments['unlock_at'],assignments['due_at'],assignments['points_possible'],assignments['grading_type'],"f","","","")
+            a = DB_Tasks(todo_list=TodolistID,user=UserID,task_name=assignments['name'],start_time=datetime, category=DB_Category.objects.get(id="1"),
+                         end_time=assignments['due_at'],points=assignments['points_possible'],point_type=assignments['grading_type'],
+                         completed="f")
+            a.save()
 
 
 def main():
@@ -282,4 +285,3 @@ def main():
     print(user)
 
 
-main()
