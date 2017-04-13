@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'canvasplusplus.me',
     '54.219.130.19',
+    'ip-172-31-8-47.us-west-1.compute.internal',
     '127.0.0.1'
 ]
 
