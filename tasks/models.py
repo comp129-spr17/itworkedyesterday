@@ -7,7 +7,7 @@ from django.dispatch import receiver
 class DB_User(models.Model):
     username = models.CharField(max_length=16, blank=False)
     canvas_token = models.CharField(max_length=256, null=True)
-    canvas_id = models.CharField(max_length=256, null=True)
+    canvas = models.CharField(max_length=256, null=True)
     canvas_avatar_url = models.CharField(max_length=256, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
