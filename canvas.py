@@ -228,6 +228,10 @@ def time_estimate(usertoken):
         input_time[course['name']] = time
     return input_time
 
+def get_avatar_url(user_token):
+    profile = get_user(user_token)
+    return profile['avatar_url']
+
 def add_assignments_DB(TodolistID, UserID, user_token):
 
     course_data = get_favorite_courses(user_token)
