@@ -155,5 +155,5 @@ def sort_by_priority(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'priority', direction, completed)
 
 
-def sort_by_manual_rank(direction=Direction.ASCENDING, completed=False):
+def sort_by_manual_rank(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'manual_rank', direction, completed)
