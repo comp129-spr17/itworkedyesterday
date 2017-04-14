@@ -8,6 +8,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
 from canvas import add_assignments_DB, get_avatar_url
+from django.views.generic.edit import UpdateView
+from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.models import User
 
 
 from tasks.forms import SignUpForm
@@ -22,6 +25,21 @@ class Todos:
 class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
+
+
+class ProfileUpdate(UpdateView):
+    model = User
+    fields = ('username', 'first_name', 'last_name', 'email')
+    template_name = 'profile.html'
+    success_url = reverse_lazy('login') # This is where the user will be
+                                       # redirected once the form
+                                       # is successfully filled in
+
+    def get_object(self, queryset=None):
+        '''This method will load the object
+           that will be used to load the form
+           that will be edited'''
+        return self.request.user
 
 
 def signup(request):
