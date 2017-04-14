@@ -14,6 +14,11 @@ from tasks.forms import SignUpForm
 
 # Create your views here.
 
+class Todos:
+    def __init__(self, name, todos):
+        self.name = name
+        self.todos = todos
+
 class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
@@ -106,18 +111,23 @@ def sort_todos(request, key, direction, completed_val):
         else:
             print('Error, direction should be \'ascending\' or \'descending\'')
             key = None
-        todos = DB_Tasks.objects.filter(user=user.id, completed=completed_val).order_by(key)
-        # context = Context({'todos': todos,
-        #                    'username': user.username,
-        #                    'imgurl': user.canvas_avatar_url,
-        #                    'list': get_template('list.html')})
-        # # html = template.render(context)
-        return render(request, 'tasks.html', {'todos': todos,
-                            'completed': completed_val,
-                           'username': user.username,
-                           'imgurl': user.canvas_avatar_url,
-                           'list': get_template('list.html')})
-        # return HttpResponse(html)
+        lists = DB_TodoList.objects.filter(owner=user.id)
+        todos = []
+        todo_list_names = []
+        i = 0
+        for cur_list in lists:
+            this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val)
+            list_object = Todos(cur_list.name, [])
+            for item in this_list:
+                list_object.todos.append(item)
+            todos.append(list_object)
+
+        return render(request, 'tasks.html', {'todo_lists': todos,
+                                              'completed': completed_val,
+                                              'username': user.username,
+                                              'imgurl': user.canvas_avatar_url,
+                                              'list': get_template('list.html'),
+                                              'lists': get_template('lists.html')})
     else:
         return redirect('/login/')
 

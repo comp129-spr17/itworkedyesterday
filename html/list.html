@@ -1,23 +1,28 @@
-{%for item in todos%}
-  <div class="taskText">
-      <li id="onHover"><b>{{ item.task_name }}</b></li>
-    <div class="showOnHover">
-        <div class="taskInfo">
-        <ul>
-            <li id="point"><b>Points:</b> {{ item.points }}</li>
-            <li id="priority"><b>Priority:</b>{{ item.priority }}</li>
-        </ul>
-    </div>
-      <a href="/com/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-success">{% if item.completed %}Uncomplete{%else%}Complete{% endif %}</a>
-      <a href="#" class="btn btn-xs btn-warning">Edit</a>
-      <a href="/rem/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-danger">Delete</a>
+{%if not todo_list.todos|length_is:"0"%}
+  {%for item in todo_list.todos%}
+    <div class="taskText">
+        <li id="onHover"><b>{{ item.task_name }}</b></li>
+      <div class="showOnHover">
+          <div class="taskInfo">
+          <ul>
+              <li id="point"><b>Points:</b> {{ item.points }}</li>
+              <li id="priority"><b>Priority:</b>{{ item.priority }}</li>
+          </ul>
+      </div>
+        <a href="/com/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-success">{% if item.completed %}Uncomplete{%else%}Complete{% endif %}</a>
+        <a href="#" class="btn btn-xs btn-warning">Edit</a>
+        <a href="/rem/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-danger">Delete</a>
 
+      </div>
+    </div>
+  {% endfor %}
+{%else%}
+  <div class="taskText">
+      <li id="onHover"><i>This list is empty! Maybe add something to it?</i></li>
+    <div class="showOnHover">
+      <div class="taskInfo">
+        {# Have an add button here. #}
+      </div>
     </div>
   </div>
-{% endfor %}
-
-
-
-
-
-
+{%endif%}
