@@ -32,14 +32,14 @@
 				    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				      <ul class="nav navbar-nav">
 								{%if completed%}
-								<li><a href="/tasks">Tasks</a></li>
+								<li><a href="/tasks/">Tasks</a></li>
 				        <li class="active"><a href="#">Completed</a><span class="sr-only">(current)</span></li>
-				        <li><a href="/logout">Log Out</a></li>
+				        <li><a href="/logout/">Log Out</a></li>
 								{%else%}
 				        <li class="active"><a href="#">Tasks<span class="sr-only">(current)</span></a></li>
-				        <li><a href="completed">Completed</a></li>
-						  <li><a href="/profile">Profile</a></li>
-				        <li><a href="/logout">Log Out</a></li>
+				        <li><a href="/tasks/completed/">Completed</a></li>
+						  <li><a href="/profile/">Profile</a></li>
+				        <li><a href="/logout/">Log Out</a></li>
 								{%endif%}
 				      </ul>
 

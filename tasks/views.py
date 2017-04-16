@@ -41,6 +41,15 @@ class ProfileUpdate(UpdateView):
            that will be edited'''
         return self.request.user
 
+sorting_types = {
+    "sort_by_points": "points",
+    "sort_by_start_time": "start_time",
+    "sort_by_due_time": "end_time",
+    "sort_by_name": "task_name",
+    "sort_by_priority": "priority",
+    "sort_by_default": "manual_rank"
+}
+
 
 def signup(request):
     if request.method == 'POST':
@@ -118,10 +127,11 @@ HOW-TO:
 @completed/completed_val: Boolean value whether or not you want the completed or incomplete tasks
 '''
 
-def sort_todos(request, key, direction, completed_val):
+def sort_todos(request, key, direction=Direction.ASCENDING, completed_val=False):
     if request.user.is_authenticated:
         template = get_template('tasks.html')
         user = DB_User.objects.get(user=request.user.id)
+        key = sorting_types.get(key, key)
         if direction == Direction.DESCENDING:
             key = '-' + key
         elif direction == Direction.ASCENDING:
