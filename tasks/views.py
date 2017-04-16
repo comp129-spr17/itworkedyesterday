@@ -127,7 +127,7 @@ HOW-TO:
 @completed/completed_val: Boolean value whether or not you want the completed or incomplete tasks
 '''
 
-def sort_todos(request, key, direction=Direction.ASCENDING, completed_val=False):
+def sort_todos(request, key='task_name', direction=Direction.ASCENDING, completed_val=False):
     if request.user.is_authenticated:
         template = get_template('tasks.html')
         user = DB_User.objects.get(user=request.user.id)
