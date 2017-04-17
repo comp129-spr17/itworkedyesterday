@@ -30,6 +30,6 @@ urlpatterns = [
     url(r'^tasks/completed/(.+)/$', views.sort_todos, {'completed_val': True}),
     url(r'^([.+/]?)rem/([0-9]+)/([0-9]+)/$', views.removed_task),
     url(r'^([.+/]?)com/([0-9]+)/([0-9]+)/$', views.complete_task),
-    url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)$/(.+)/$', views.edit_task),
-    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)$/(.+)/$', views.add_task)
+    url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)/$', views.edit_task),
+    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)/$', views.add_task)
 ]

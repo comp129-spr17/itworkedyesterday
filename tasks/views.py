@@ -1,9 +1,9 @@
 from datetime import datetime
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template.loader import get_template
 from django.template import Context
-from tasks.models import DB_User, DB_TodoList, DB_Tasks
+from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
@@ -11,6 +11,7 @@ from canvas import add_assignments_DB, get_avatar_url
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
+from django import forms
 
 
 from tasks.forms import SignUpForm
@@ -18,9 +19,10 @@ from tasks.forms import SignUpForm
 # Create your views here.
 
 class Todos:
-    def __init__(self, name, todos):
+    def __init__(self, name, todos, id_num):
         self.name = name
         self.todos = todos
+        self.id = id_num
 
 class Direction(Enum):
     ASCENDING = 0
@@ -40,6 +42,9 @@ class ProfileUpdate(UpdateView):
            that will be used to load the form
            that will be edited'''
         return self.request.user
+
+class TaskForm(forms.Form):
+    new_task = forms.CharField(label='new_task', required=True, max_length=256)
 
 sorting_types = {
     "sort_by_points": "points",
@@ -78,9 +83,9 @@ def signup(request):
 
 def handle_source(source):
     if source != "":
-        return redirect(source)
+        return HttpResponseRedirect(source)
     else:
-        return redirect('/tasks/')
+        return HttpResponseRedirect('/tasks/')
 
 
 def create_task(user, list_id, name):
@@ -114,10 +119,26 @@ def edit_task(request, source, user_id, task_id, new_name):
     return handle_source(source)
 
 
-def add_task(request, source, user_id, list_id, new_task):
-    task = DB_Tasks(user_id, list_id, new_task)
-    task.save()
-    return handle_source(source)
+def add_task(request, source, user_id, list_id):
+    print("add_task called.")
+    if request.method == 'POST':
+        print("request.method is POST.")
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            print('form is valid.')
+            new_task = form.cleaned_data['new_task']
+            owner = DB_User.objects.get(id=user_id)
+            containing_list = DB_TodoList.objects.get(id=list_id)
+            category = DB_Category.objects.get(id=1)
+            task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task, completed=False, points=0, point_type="Default", category=category)
+            print(task)
+            task.save()
+            return sort_todos(request)
+        else:
+            print('form is invalid. Errors: {}'.format(form.errors))
+    else:
+        form = NameForm()
+    return sort_todos(request)
 
 '''
 Task Sorting
@@ -143,9 +164,10 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
         todos = []
         todo_list_names = []
         i = 0
+        new_task_form = TaskForm()
         for cur_list in lists:
             this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val)
-            list_object = Todos(cur_list.name, [])
+            list_object = Todos(cur_list.name, [], cur_list.id)
             for item in this_list:
                 list_object.todos.append(item)
             todos.append(list_object)
@@ -153,9 +175,12 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
         return render(request, 'tasks.html', {'todo_lists': todos,
                                               'completed': completed_val,
                                               'username': user.username,
+                                              'user_id': user.id,
                                               'imgurl': user.canvas_avatar_url,
+                                              'new_form': new_task_form,
                                               'list': get_template('list.html'),
-                                              'lists': get_template('lists.html')})
+                                              'lists': get_template('lists.html'),
+                                              'add': get_template('add.html')})
     else:
         return redirect('/login/')
 

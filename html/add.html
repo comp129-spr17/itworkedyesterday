@@ -1,0 +1,5 @@
+<form action="/add/{{ user_id }}/{{ todo_list.id }}/" method="post">
+  {% csrf_token %}
+  {{ new_form }}
+  <div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Create"></div>
+</form>
