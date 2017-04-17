@@ -120,22 +120,16 @@ def edit_task(request, source, user_id, task_id, new_name):
 
 
 def add_task(request, source, user_id, list_id):
-    print("add_task called.")
     if request.method == 'POST':
-        print("request.method is POST.")
         form = TaskForm(request.POST)
         if form.is_valid():
-            print('form is valid.')
             new_task = form.cleaned_data['new_task']
             owner = DB_User.objects.get(id=user_id)
             containing_list = DB_TodoList.objects.get(id=list_id)
             category = DB_Category.objects.get(id=1)
             task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task, completed=False, points=0, point_type="Default", category=category)
-            print(task)
             task.save()
             return sort_todos(request)
-        else:
-            print('form is invalid. Errors: {}'.format(form.errors))
     else:
         form = NameForm()
     return sort_todos(request)

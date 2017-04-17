@@ -1,9 +1,9 @@
 {% for todo_list in todo_lists %}
   <div class="listContainer">
     <div class="heading">
-      {{ todo_list.name }}
+      {{ todo_list.name }}: {{ todo_list.id }}
       <!-- Trigger the modal with a button -->
-      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" id="newButton">New</button>
+      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#add_modal_{{todo_list.id}}" id="newButton">New</button>
       <div class="dropdown" id="dropdownmenu_">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           Sorting
@@ -26,23 +26,7 @@
         </ul>
       </div>
       <!-- Modal -->
-      <div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">New Task</h4>
-            </div>
-            <div class="modal-body">
-              <div class="input-group">
-                {%include add%}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {% include add %}
     </div>
 
       <ul id="todoList">
