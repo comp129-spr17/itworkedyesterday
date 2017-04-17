@@ -1,16 +1,16 @@
-<div id="add_modal_{{todo_list.id}}" class="modal fade" role="dialog">
+<div id="edit_modal_{{item.id}}" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Task to {{todo_list.name}}</h4>
+        <h4 class="modal-title">Edit Task: {{item.task_name}}</h4>
       </div>
       <div class="modal-body">
         <div class="input-group">
-          <form action="/add/{{ user_id }}/{{ todo_list.id }}/" method="post">
+          <form action="/edt/{{ user_id }}/{{ item.id }}/" method="post">
             {% csrf_token %}
-            {{ new_form }}
+            {{ edit_form }}
             <div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Create"></div>
           </form>
         </div>

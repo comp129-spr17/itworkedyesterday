@@ -24,6 +24,13 @@ class Todos:
         self.todos = todos
         self.id = id_num
 
+
+class TasksObj:
+    def __init__(self, db_task, edit_form):
+        self.db_task = db_task
+        self.edit_form = edit_form
+
+
 class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
@@ -43,8 +50,15 @@ class ProfileUpdate(UpdateView):
            that will be edited'''
         return self.request.user
 
+
 class TaskForm(forms.Form):
     new_task = forms.CharField(label='new_task', required=True, max_length=256)
+
+class EditForm(forms.Form):
+    task_name = forms.CharField(label='task_name', required=False, max_length=256)
+    points = forms.IntegerField(label='point', required=False)
+    priority = forms.IntegerField(label='priority', required=False)
+
 
 sorting_types = {
     "sort_by_points": "points",
@@ -111,12 +125,22 @@ def complete_task(request, source, user_id, task_id):
     return handle_source(source)
 
 
-def edit_task(request, source, user_id, task_id, new_name):
-    selected_task = get_task(user_id, task_id)
-    if selected_task is not None:
-        selected_task.task_name = new_name
-        selected_task.save()
-    return handle_source(source)
+def edit_task(request, source, user_id, task_id):
+    if request.method == 'POST':
+        selected_task = get_task(user_id, task_id)
+        form = EditForm(request.POST)
+        if form.is_valid():
+            if selected_task is not None:
+                if form.cleaned_data['task_name'] is not None and form.cleaned_data['task_name'] != "":
+                    selected_task.task_name = form.cleaned_data['task_name']
+                if form.cleaned_data['points'] is not None:
+                    selected_task.points = form.cleaned_data['points']
+                if form.cleaned_data['priority'] is not None:
+                    selected_task.priority = form.cleaned_data['priority']
+                selected_task.save()
+    else:
+        form = EditForm()
+    return sort_todos(request)
 
 
 def add_task(request, source, user_id, list_id):
@@ -159,6 +183,7 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
         todo_list_names = []
         i = 0
         new_task_form = TaskForm()
+        edit_task_form = EditForm()
         for cur_list in lists:
             this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val)
             list_object = Todos(cur_list.name, [], cur_list.id)
@@ -172,9 +197,11 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
                                               'user_id': user.id,
                                               'imgurl': user.canvas_avatar_url,
                                               'new_form': new_task_form,
+                                              'edit_form': edit_task_form,
                                               'list': get_template('list.html'),
                                               'lists': get_template('lists.html'),
-                                              'add': get_template('add.html')})
+                                              'add': get_template('add.html'),
+                                              'edit': get_template('edit.html')})
     else:
         return redirect('/login/')
 
