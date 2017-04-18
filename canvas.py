@@ -234,14 +234,16 @@ def get_avatar_url(user_token):
 
 def add_assignments_DB(TodolistID, UserID, user_token):
     course_data = get_favorite_courses(user_token)
+    count = 1
     for favorite_course in course_data:
 
         assignments_data = get_assignments(str(favorite_course['id']),user_token)
         for assignments in assignments_data:
             if str(datetime.datetime.now().isoformat()) <= str(assignments['due_at']):
                 a = DB_Tasks(todo_list=TodolistID,user=UserID,task_name=assignments['name'],start_time=datetime, category=DB_Category.objects.get(id="1"),
-                         end_time=assignments['due_at'],points=assignments['points_possible'],point_type=assignments['grading_type'],
+                         end_time=assignments['due_at'],points=assignments['points_possible'],point_type=assignments['grading_type'],manual_rank = count,
                          completed="f")
+                count = count+1
                 a.save()
 
 def main():
@@ -261,6 +263,7 @@ def main():
         for assignments in assignments_data:
             print(assignments['name'])
     # Print Favorite Courses
+
     '''
     for favorite_course in course_data:
         #total = 0
@@ -288,3 +291,4 @@ def main():
     user.display()
     print("\nUser Object string output:")
     print(user)
+
