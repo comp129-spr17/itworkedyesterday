@@ -311,6 +311,15 @@ def get_highest_rank(todolist):
     return rank
 
 
+def fill_in_user_ranks(user):
+    list_of_lists = DB_TodoList.objects.filter(user=user)
+    for todolist in list_of_lists:
+        list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
+        for item in list_of_tasks:
+            item.manual_rank = get_highest_rank(todolist) + 1
+            item.save()
+
+
 def fill_in_database(request):
     list_of_lists = DB_TodoList.objects.all()
     for todolist in list_of_lists:
