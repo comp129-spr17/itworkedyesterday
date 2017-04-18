@@ -1,18 +1,6 @@
 {%if not todo_list.todos|length_is:"0"%}
   {%for item in todo_list.todos%}
-    <div class="taskText">
-        <li id="onHover"><b>{{ item.task_name }}</b></li>
-      <div class="showOnHover">
-        <div class="taskInfo">
-            <p>&nbsp;&nbsp;<b>Points:</b> {{ item.points }} &nbsp;<b>Priority:</b> {{ item.priority }}</p>
-            </div>
-              <a href="/com/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-success">{% if item.completed %}Uncomplete{%else%}Complete{% endif %}</a>
-              {# <a href="#" class="btn btn-xs btn-warning">Edit</a>#}
-              <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#edit_modal_{{item.id}}" id="newButton">Edit</button>
-              <a href="/rem/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-danger">Delete</a>
-      </div>
-    </div>
-    {% include edit %}
+    {%include individual_task%}
   {% endfor %}
 {%else%}
   <div class="taskText">

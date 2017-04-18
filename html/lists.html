@@ -11,17 +11,9 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
           {%if completed%}
-          <li><a href="/tasks/completed/sort_by_points">Points</a></li>
-          <li><a href="/tasks/completed/sort_by_start_time">Start Time</a></li>
-          <li><a href="/tasks/completed/sort_by_due_time">End Time</a></li>
-          <li><a href="/tasks/completed/sort_by_name">Name</a></li>
-          <li><a href="/tasks/completed/sort_by_priority">Priority</a></li>
+          {% with "/tasks/completed" as base_url %}{% include sorting %}{% endwith %}
           {%else%}
-          <li><a href="/tasks/sort_by_points">Points</a></li>
-          <li><a href="/tasks/sort_by_start_time">Start Time</a></li>
-          <li><a href="/tasks/sort_by_due_time">End Time</a></li>
-          <li><a href="/tasks/sort_by_name">Name</a></li>
-          <li><a href="/tasks/sort_by_priority">Priority</a></li>
+          {% with "/tasks" as base_url %}{% include sorting %}{% endwith %}
           {%endif%}
         </ul>
       </div>
@@ -34,7 +26,7 @@
         {% include list %}
 
         <!-- Modal edit task-->
-        
+
 
       </ul>
   </div>

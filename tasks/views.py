@@ -7,14 +7,13 @@ from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
-from canvas import add_assignments_DB, get_avatar_url
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 from django import forms
 
-
 from tasks.forms import SignUpForm
+from canvas import add_assignments_DB, get_avatar_url
 
 # Create your views here.
 
@@ -54,6 +53,7 @@ class ProfileUpdate(UpdateView):
 class TaskForm(forms.Form):
     new_task = forms.CharField(label='new_task', required=True, max_length=256)
 
+
 class EditForm(forms.Form):
     task_name = forms.CharField(label='task_name', required=False, max_length=256)
     points = forms.IntegerField(label='point', required=False)
@@ -66,7 +66,8 @@ sorting_types = {
     "sort_by_due_time": "end_time",
     "sort_by_name": "task_name",
     "sort_by_priority": "priority",
-    "sort_by_default": "manual_rank"
+    "sort_by_default": "manual_rank",
+    "sort_by_manual_rank": "manual_rank"
 }
 
 
@@ -151,12 +152,67 @@ def add_task(request, source, user_id, list_id):
             owner = DB_User.objects.get(id=user_id)
             containing_list = DB_TodoList.objects.get(id=list_id)
             category = DB_Category.objects.get(id=1)
-            task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task, completed=False, points=0, point_type="Default", category=category)
+            task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
+                            completed=False, points=0, point_type="Default", category=category)
             task.save()
             return sort_todos(request)
     else:
         form = NameForm()
     return sort_todos(request)
+
+
+def move_up(request, source, user_id, task_id, completed_val):
+    selected_task = get_task(user_id, task_id)
+    user = DB_User(id=user_id)
+    above_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('manual_rank')
+    above_task = None
+    for task in above_tasks:
+        if task.manual_rank <= selected_task.manual_rank:
+            continue
+        else:
+            above_task = task
+            break
+    if above_task is None:
+        if completed_val:
+            return handle_source('/tasks/completed/')
+        else:
+            return handle_source('/tasks/')
+    if selected_task is not None:
+        selected_task.manual_rank += 1
+        above_task.manual_rank -= 1
+        selected_task.save()
+        above_task.save()
+    if completed_val:
+        return handle_source('/tasks/completed/')
+    else:
+        return handle_source('/tasks/')
+
+
+def move_down(request, source, user_id, task_id, completed_val):
+    selected_task = get_task(user_id, task_id)
+    user = DB_User(id=user_id)
+    below_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('-manual_rank')
+    below_task = None
+    for task in below_tasks:
+        if task.manual_rank >= selected_task.manual_rank:
+            continue
+        else:
+            below_task = task
+            break
+    if below_task is None:
+        if completed_val:
+            return handle_source('/tasks/completed/')
+        else:
+            return handle_source('/tasks/')
+    if selected_task is not None:
+        selected_task.manual_rank -= 1
+        below_task.manual_rank += 1
+        selected_task.save()
+        below_task.save()
+    if completed_val:
+        return handle_source('/tasks/completed/')
+    else:
+        return handle_source('/tasks/')
 
 '''
 Task Sorting
@@ -166,7 +222,7 @@ HOW-TO:
 @completed/completed_val: Boolean value whether or not you want the completed or incomplete tasks
 '''
 
-def sort_todos(request, key='task_name', direction=Direction.ASCENDING, completed_val=False):
+def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDING, completed_val=False):
     if request.user.is_authenticated:
         template = get_template('tasks.html')
         user = DB_User.objects.get(user=request.user.id)
@@ -185,7 +241,7 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
         new_task_form = TaskForm()
         edit_task_form = EditForm()
         for cur_list in lists:
-            this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val)
+            this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val).order_by(key)
             list_object = Todos(cur_list.name, [], cur_list.id)
             for item in this_list:
                 list_object.todos.append(item)
@@ -193,6 +249,7 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
 
         return render(request, 'tasks.html', {'todo_lists': todos,
                                               'completed': completed_val,
+                                              'in_manual_rank_mode': key == 'manual_rank' or  key == '-manual_rank',
                                               'username': user.username,
                                               'user_id': user.id,
                                               'imgurl': user.canvas_avatar_url,
@@ -201,7 +258,9 @@ def sort_todos(request, key='task_name', direction=Direction.ASCENDING, complete
                                               'list': get_template('list.html'),
                                               'lists': get_template('lists.html'),
                                               'add': get_template('add.html'),
-                                              'edit': get_template('edit.html')})
+                                              'edit': get_template('edit.html'),
+                                              'sorting': get_template('sorting.html'),
+                                              'individual_task': get_template('individual_task.html')})
     else:
         return redirect('/login/')
 
@@ -241,3 +300,32 @@ def sort_by_priority(request, direction=Direction.ASCENDING, completed=False):
 
 def sort_by_manual_rank(request, direction=Direction.ASCENDING, completed=False):
     return sort_todos(request,'manual_rank', direction, completed)
+
+
+def get_highest_rank(todolist):
+    rank = 0
+    list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
+    for item in list_of_tasks:
+        if item.manual_rank is not None:
+            rank = max(item.manual_rank, rank)
+    return rank
+
+
+def fill_in_database(request):
+    list_of_lists = DB_TodoList.objects.all()
+    for todolist in list_of_lists:
+        list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
+        for item in list_of_tasks:
+            item.manual_rank = get_highest_rank(todolist) + 1
+            item.save()
+    return redirect('/tasks/')
+
+
+def drop_ranks(request):
+    list_of_lists = DB_TodoList.objects.all()
+    for todolist in list_of_lists:
+        list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
+        for task in list_of_tasks:
+            task.manual_rank = None
+            task.save()
+    return redirect('/tasks/')

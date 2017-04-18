@@ -31,5 +31,11 @@ urlpatterns = [
     url(r'^([.+/]?)rem/([0-9]+)/([0-9]+)/$', views.removed_task),
     url(r'^([.+/]?)com/([0-9]+)/([0-9]+)/$', views.complete_task),
     url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)/$', views.edit_task),
-    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)/$', views.add_task)
+    url(r'^([.+/]?)add/([0-9]+)/([0-9]+)/$', views.add_task),
+    url(r'^([.+/]?)completed/upw/([0-9]+)/([0-9]+)/$', views.move_up, {'completed_val': True}),
+    url(r'^([.+/]?)completed/dwn/([0-9]+)/([0-9]+)/$', views.move_down, {'completed_val': True}),
+    url(r'^([.+/]?)upw/([0-9]+)/([0-9]+)/$', views.move_up, {'completed_val': False}),
+    url(r'^([.+/]?)dwn/([0-9]+)/([0-9]+)/$', views.move_down, {'completed_val': False}),
+    url(r'^fill/$', views.fill_in_database),
+    url(r'^drop/$', views.drop_ranks)
 ]
