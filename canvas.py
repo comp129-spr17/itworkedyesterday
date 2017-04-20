@@ -210,7 +210,8 @@ def get_courses(usertoken):
 def get_assignments(course_id, usertoken):
     mode = "users/self/courses/" + course_id + "/assignments"
     try:
-        return get_data(mode, usertoken)
+        return get_data_from_url(get_url(mode,usertoken)+ '&per_page=200')
+        #return get_data(mode, usertoken)
     except (url_error.HTTPError, url_error.URLError, url_error.ContentTooShortError):
         logging.error('Unable to retrieve assignment list from each of your favorite courses.')
         return None
@@ -245,6 +246,14 @@ def add_assignments_DB(TodolistID, UserID, user_token):
                          completed="f")
                 count = count+1
                 a.save()
+            else:
+                a = DB_Tasks(todo_list=TodolistID, user=UserID, task_name=assignments['name'], start_time=datetime,
+                             category=DB_Category.objects.get(id="1"),
+                             end_time=assignments['due_at'], points=assignments.get('points_possible', 0),
+                             point_type=assignments.get('grading_type',"Default"), manual_rank=count,
+                             completed="t")
+                count = count + 1
+                a.save()
 
 def main():
     global user_token  # The token used to authenticate the user.
@@ -253,7 +262,6 @@ def main():
     user = User(user_data, user_token)
     user.add(get_favorite_courses(user_token))
     user.add(user_token)
-    course_data = get_favorite_courses(user_token)
     #pp.pprint(course_data)
     #time_needed = time_estimate(user_token)
     course_data2 = get_favorite_courses(user_token)
