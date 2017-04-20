@@ -241,7 +241,7 @@ def add_assignments_DB(TodolistID, UserID, user_token):
         for assignments in assignments_data:
             if str(datetime.datetime.now().isoformat()) <= str(assignments['due_at']):
                 a = DB_Tasks(todo_list=TodolistID,user=UserID,task_name=assignments['name'],start_time=datetime, category=DB_Category.objects.get(id="1"),
-                         end_time=assignments['due_at'],points=assignments['points_possible'],point_type=assignments['grading_type'],manual_rank = count,
+                         end_time=assignments['due_at'],points=assignments.get('points_possible', 0),point_type=assignments.get('grading_type',"Default"),manual_rank = count,
                          completed="f")
                 count = count+1
                 a.save()
@@ -291,4 +291,3 @@ def main():
     user.display()
     print("\nUser Object string output:")
     print(user)
-
