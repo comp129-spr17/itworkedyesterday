@@ -248,12 +248,17 @@ def add_assignments_DB(TodolistID, UserID, user_token):
                 a.save()
             else:
                 a = DB_Tasks(todo_list=TodolistID, user=UserID, task_name=assignments['name'], start_time=datetime,
-                             category=DB_Category.objects.get(id="1"),
-                             end_time=assignments['due_at'], points=assignments.get('points_possible', 0),
+                             category=DB_Category.objects.get(id="1"), end_time=assignments['due_at'],
+                             points=handle_potential_none_points(assignments.get('points_possible', 0)),
                              point_type=assignments.get('grading_type',"Default"), manual_rank=count,
                              completed="t")
                 count = count + 1
                 a.save()
+
+def handle_potential_none_points(points):
+    if points is None:
+        points = 0
+    return points
 
 def main():
     global user_token  # The token used to authenticate the user.
