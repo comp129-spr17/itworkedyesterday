@@ -81,11 +81,12 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             t = DB_User.objects.get(username=form.cleaned_data.get('username'))
-            t.canvas_token = form.cleaned_data.get('canvas_token')
-            t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
-            t.save()
-            todol = DB_TodoList.objects.get(owner=t.id)
-            add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
+            if form.cleaned_data.get('canvas_token') != "":
+                t.canvas_token = form.cleaned_data.get('canvas_token')
+                t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
+                t.save()
+                todol = DB_TodoList.objects.get(owner=t.id)
+                add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
             return redirect('/login/')
 
     else:
@@ -309,6 +310,15 @@ def get_highest_rank(todolist):
         if item.manual_rank is not None:
             rank = max(item.manual_rank, rank)
     return rank
+
+
+def fill_in_user_ranks(user):
+    list_of_lists = DB_TodoList.objects.filter(user=user)
+    for todolist in list_of_lists:
+        list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
+        for item in list_of_tasks:
+            item.manual_rank = get_highest_rank(todolist) + 1
+            item.save()
 
 
 def fill_in_database(request):
