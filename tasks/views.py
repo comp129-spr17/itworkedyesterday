@@ -20,7 +20,7 @@ from django import forms
 from django.contrib.admin import widgets
 
 from datetimewidget.widgets import DateTimeWidget
-from tasks.forms import SignUpForm
+from tasks.forms import SignUpForm, ProfileForm
 from canvas import add_assignments_DB, get_avatar_url
 
 # Create your views here.
@@ -45,7 +45,7 @@ class Direction(Enum):
 
 class ProfileUpdate(UpdateView):
     model = User
-    fields = ('username', 'first_name', 'last_name', 'email')
+    form_class = ProfileForm
     template_name = 'profile.html'
     success_url = reverse_lazy('login') # This is where the user will be
                                        # redirected once the form

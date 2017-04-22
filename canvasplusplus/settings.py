@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'tasks',
     'datetimewidget'
 ]
+#password reset
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

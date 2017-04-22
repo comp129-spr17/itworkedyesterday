@@ -18,6 +18,7 @@ class DB_User(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
 
+
 @receiver(post_save, sender=User)
 def update_user_profile(sender, instance, created, **kwargs):
     if created:
