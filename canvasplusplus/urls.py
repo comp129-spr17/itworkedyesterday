@@ -13,6 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+'''
+* It Worked Yesterday...
+* 3/20/17
+* canvasplusplus.urls.py
+* Links URLs to the functions that render the relevant pages.
+'''
 from django.conf.urls import url
 from django.contrib import admin
 from tasks import views
@@ -37,5 +43,5 @@ urlpatterns = [
     url(r'^([.+/]?)upw/([0-9]+)/([0-9]+)/$', views.move_up, {'completed_val': False}),
     url(r'^([.+/]?)dwn/([0-9]+)/([0-9]+)/$', views.move_down, {'completed_val': False}),
     url(r'^fill/$', views.fill_in_database),
-    url(r'^drop/$', views.drop_ranks)
+    url(r'^drop/$', views.drop_due),
 ]

@@ -1,3 +1,9 @@
+'''
+* It Worked Yesterday...
+* 3/20/17
+* tasks.models.py
+* Represents all database objects as Python classes.
+'''
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -42,7 +48,7 @@ class DB_Tasks(models.Model):
     category = models.ForeignKey(DB_Category, on_delete=models.CASCADE, null=True)
     task_name = models.CharField(max_length=256, null=False)
     start_time = models.DateTimeField(auto_now=True, null=True)
-    end_time = models.DateTimeField(auto_now=True, null=True)
+    end_time = models.DateTimeField(auto_now=False, null=True)
     points = models.IntegerField(null=True)
     point_type = models.CharField(max_length=16, null=True)
     completed = models.BooleanField(blank=True)
