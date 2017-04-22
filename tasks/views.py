@@ -59,7 +59,10 @@ class ProfileUpdate(UpdateView):
 
 
 class TaskForm(forms.Form):
-    new_task = forms.CharField(label='new_task', required=True, max_length=256)
+    task_name = forms.CharField(label='task_name', required=True, max_length=256)
+    points = forms.IntegerField(label='point', required=False)
+    priority = forms.IntegerField(label='priority', required=False)
+    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
 
 class EditForm(forms.Form):
@@ -148,7 +151,7 @@ def edit_task(request, source, user_id, task_id):
                     selected_task.points = form.cleaned_data['points']
                 if form.cleaned_data['priority'] is not None:
                     selected_task.priority = form.cleaned_data['priority']
-                if form.cleaned_data['due_date'] is not None:
+                if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
                     selected_task.end_time = form.cleaned_data['due_date']
                 selected_task.save()
     else:
@@ -160,14 +163,20 @@ def add_task(request, source, user_id, list_id):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            new_task = form.cleaned_data['new_task']
+            new_task = form.cleaned_data['task_name']
             owner = DB_User.objects.get(id=user_id)
             containing_list = DB_TodoList.objects.get(id=list_id)
             category = DB_Category.objects.get(id=1)
             task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
                             completed=False, points=0, point_type="Default",
                             category=category, manual_rank=get_highest_rank(containing_list)+1,
-                            start_time=datetime.datetime.now(), end_time=None)
+                            start_time=datetime.now(), end_time=None)
+            if form.cleaned_data['points'] is not None:
+                task.points = form.cleaned_data['points']
+            if form.cleaned_data['priority'] is not None:
+                task.priority = form.cleaned_data['priority']
+            if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
+                task.end_time = form.cleaned_data['due_date']
             task.save()
             return sort_todos(request)
     else:
