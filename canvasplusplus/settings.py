@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tasks',
-    'datetimewidget'
+    'datetimewidget',
+    'analytical'
 ]
 #password reset
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -138,3 +139,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#
+#
+CLICKY_SITE_ID = '101041249'
+GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-97853138-1'
+GOOGLE_ANALYTICS_SITE_SPEED = True
+MIXPANEL_API_TOKEN = '4134595f15f5dd12c4286218d6c576dc'
