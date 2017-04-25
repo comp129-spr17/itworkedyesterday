@@ -1,6 +1,13 @@
+<!--
+* It Worked Yesterday...
+* 3/20/17
+* html.tasks.html
+* Template for the tasks page.-->
+{% load analytical %}
 <!doctype html>
 <html>
 	<head>
+		{% analytical_head_top %}
 		<title>{%if not completed%}Tasks{%else%}Completed{%endif%}</title>
 		<!-- for jquery -->
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
@@ -11,9 +18,36 @@
 		<!-- Optional theme -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-	</head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+    <script src="/static/js/bootstrap.js"></script>
+		<!--  jQuery -->
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
+		<!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
+		<link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+
+		<!-- Bootstrap Date-Picker Plugin -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    {{ edit_form.media }}
+		{% analytical_head_bottom %}
+	</head>
 	<body>
+		{% analytical_body_top %}
+		<script>
+    $(document).ready(function(){
+      var date_input=$('input[name="date"]'); //our date input has the name "date"
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+      var options={
+        format: 'mm/dd/yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+      };
+      date_input.datepicker(options);
+    })
+</script>
 		<header class="navbar-inverse" role="banner">
 				<nav role="navigation">
 				  <div class="container-fluid">
@@ -35,11 +69,13 @@
 								<li><a href="/tasks/">Tasks</a></li>
 				        <li class="active"><a href="#">Completed</a><span class="sr-only">(current)</span></li>
 						  	<li><a href="/profile/">Profile</a></li>
+								{% if request.user.is_superuser %}<li><a href="/admin/">Admin</a></li>{% endif %}
 				        <li><a href="/logout/">Log Out</a></li>
 								{%else%}
 				        <li class="active"><a href="#">Tasks<span class="sr-only">(current)</span></a></li>
 				        <li><a href="/tasks/completed/">Completed</a></li>
 						  	<li><a href="/profile/">Profile</a></li>
+								{% if request.user.is_superuser %}<li><a href="/admin/">Admin</a></li>{% endif %}
 				        <li><a href="/logout/">Log Out</a></li>
 								{%endif%}
 				      </ul>
@@ -56,5 +92,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		{% analytical_body_bottom %}
 	</body>
 </html>

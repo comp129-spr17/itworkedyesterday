@@ -1,3 +1,8 @@
+<!--
+* It Worked Yesterday...
+* 4/17/17
+* html.edit.html
+* Template for the edit form.-->
 <div id="edit_modal_{{item.id}}" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -10,8 +15,13 @@
         <div class="input-group">
           <form action="/edt/{{ user_id }}/{{ item.id }}/" method="post">
             {% csrf_token %}
-            {{ edit_form }}
-            <div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Create"></div>
+            {{edit_form.as_p}}
+            <!-- <p><label for="id_task_name">Task Name:</label></th><td><input id="id_task_name" maxlength="256" name="task_name" type="text" value="{{item.task_name}}" class="form-control placeholder="Task Title" aria-describedby="basic-addon1""/></p>
+            <p><label for="id_points">Points:</label></th><td><input id="id_points" name="points" type="number" value="{{item.points}}" class="form-control placeholder="Points" aria-describedby="basic-addon1""/></p>
+            <p><label for="id_priority">Priority:</label></th><td><input id="id_priority" name="priority" type="number" value="{{item.priority}}" class="form-control" placeholder="Priority" aria-describedby="basic-addon1"/></p>
+            <p><label for="id_due_date">Due Date:</label><div id="id_due_date" class="input-group date"><input id="id_due_date" name="due_date" type="text" value="{{item.end_time}}" class="form-control" placeholder="Due Date" aria-describedby="basic-addon1"><span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span><span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span></div></p> -->
+            <br>
+            <div align="center"><p><div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Edit"></div></p></div>
           </form>
         </div>
       </div>

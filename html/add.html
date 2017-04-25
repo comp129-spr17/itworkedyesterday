@@ -1,3 +1,8 @@
+<!--
+* It Worked Yesterday...
+* 4/17/17
+* html.add.html
+* Template for the add form.-->
 <div id="add_modal_{{todo_list.id}}" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -10,8 +15,9 @@
         <div class="input-group">
           <form action="/add/{{ user_id }}/{{ todo_list.id }}/" method="post">
             {% csrf_token %}
-            {{ new_form }}
-            <div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Create"></div>
+            {{new_form.as_p}}
+            <br>
+            <div align="center"><p><div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Create"></div></p></div>
           </form>
         </div>
       </div>

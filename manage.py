@@ -1,3 +1,9 @@
+'''
+* It Worked Yesterday...
+* 3/20/17
+* manage.py
+* Auto-generated Django file. Used to run the server and perform other important commands.
+'''
 #!/usr/bin/env python
 import os
 import sys
