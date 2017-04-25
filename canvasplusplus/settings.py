@@ -151,6 +151,6 @@ MIXPANEL_API_TOKEN = '4134595f15f5dd12c4286218d6c576dc'
 # Email Information
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'itworkedyesterday'
+EMAIL_HOST_USER = 'canvasplusplus'
 EMAIL_HOST_PASSWORD = 'itworkedyesterday2'
 EMAIL_USE_TLS = True
