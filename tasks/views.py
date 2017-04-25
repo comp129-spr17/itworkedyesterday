@@ -147,6 +147,8 @@ def handle_source(source):
 def create_task(user, list_id, name):
     return DB_Tasks(user=user, task_name=name, todo_list=list_id, category="Default")
 
+def create_list(user, list_name, service='Defauly'):
+    return DB_TodoList(owner=user, name=list_name, service=source)
 
 def get_task(user_id, task_id):
     return DB_Tasks.objects.get(user=user_id, id=task_id)
