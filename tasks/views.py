@@ -43,20 +43,64 @@ class Direction(Enum):
     DESCENDING = 1
 
 
-class ProfileUpdate(UpdateView):
+'''class ProfileUpdate(UpdateView):
     model = User
-    form_class = ProfileForm
+    fields = ('username', 'first_name', 'last_name', 'email')
     template_name = 'profile.html'
     success_url = reverse_lazy('login') # This is where the user will be
                                        # redirected once the form
                                        # is successfully filled in
 
     def get_object(self, queryset=None):
-        '''This method will load the object
+        ''This method will load the object
            that will be used to load the form
-           that will be edited'''
+           that will be edited''
         return self.request.user
+'''
 
+
+def update(request):
+    form = ProfileForm(request.POST, instance=request.user)
+    if request.method == 'POST':
+        if form.is_valid():
+            m = form.save(commit=False)
+            m.user = request.user
+            m.save()
+
+            t = DB_User.objects.get(username=form.cleaned_data.get('username'))
+            t.canvas_token = form.cleaned_data.get('canvas_token')
+            t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
+            t.save()
+            return redirect('/login/')
+    else:
+        form = ProfileForm(instance=request.user)
+    return render(request, 'profile.html', {'form': form})
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            t = DB_User.objects.get(username=form.cleaned_data.get('username'))
+            if form.cleaned_data.get('canvas_token') != "":
+                t.canvas_token = form.cleaned_data.get('canvas_token')
+                t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
+                t.save()
+                todol = DB_TodoList.objects.get(owner=t.id)
+                add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
+            return redirect('/login/')
+
+    else:
+        form = SignUpForm()
+    #if form.cleaned_data.get('token'):
+        #add_assignments_DB()
+
+    return render(request, 'signup.html', {'form': form})
 
 class TaskForm(forms.Form):
     task_name = forms.CharField(label='task_name', required=True, max_length=256)
@@ -109,32 +153,6 @@ sorting_types = {
 
 def home(request):
     return redirect('/tasks/')
-
-
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            t = DB_User.objects.get(username=form.cleaned_data.get('username'))
-            if form.cleaned_data.get('canvas_token') != "":
-                t.canvas_token = form.cleaned_data.get('canvas_token')
-                t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
-                t.save()
-                todol = DB_TodoList.objects.get(owner=t.id)
-                add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
-            return redirect('/login/')
-
-    else:
-        form = SignUpForm()
-    #if form.cleaned_data.get('token'):
-        #add_assignments_DB()
-
-    return render(request, 'signup.html', {'form': form})
 
 
 def handle_source(source):
