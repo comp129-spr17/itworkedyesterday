@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 from django import forms
 
-from tasks.forms import SignUpForm, ProfileForm
+from tasks.forms import SignUpForm
 from canvas import add_assignments_DB, get_avatar_url
 
 # Create your views here.
@@ -34,22 +34,6 @@ class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
 
-
-class ProfileUpdate(UpdateView):
-    model = User
-    form_class = ProfileForm
-    template_name = 'profile.html'
-    success_url = reverse_lazy('login') # This is where the user will be
-                                       # redirected once the form
-                                       # is successfully filled in
-
-    def get_object(self, queryset=None):
-        '''This method will load the object
-           that will be used to load the form
-           that will be edited'''
-        return self.request.user
-
-
 class TaskForm(forms.Form):
     new_task = forms.CharField(label='new_task', required=True, max_length=256)
 
@@ -70,6 +54,31 @@ sorting_types = {
     "sort_by_manual_rank": "manual_rank"
 }
 
+def updateProfile(request):
+    if request.user.is_authenticated:
+        user = DB_User.objects.get(user=request.user.id)
+
+
+        if request.method == 'POST':
+            user_form = SignUpForm(request.POST, instance=request.user)
+            if user_form.is_valid():
+                user_form.save()
+                username = user_form.cleaned_data.get('username')
+                user.username = username
+                if user_form.cleaned_data.get('canvas_token') != "":
+                    user.canvas_token = user_form.cleaned_data.get('canvas_token')
+                    user.canvas_avatar_url = get_avatar_url(user_form.cleaned_data.get('canvas_token'))
+                else:
+                    user.canvas_token = ""
+                    user.canvas_avatar_url = ""
+                user.save()
+                return redirect('/profile/')
+        else:
+            user_form = SignUpForm(instance=request.user)
+        return render(request, 'profile.html', {'user_form': user_form} )
+    else:
+        redirect('/login/')
+
 
 def signup(request):
     if request.method == 'POST':
@@ -84,9 +93,9 @@ def signup(request):
             if form.cleaned_data.get('canvas_token') != "":
                 t.canvas_token = form.cleaned_data.get('canvas_token')
                 t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
-                t.save()
                 todol = DB_TodoList.objects.get(owner=t.id)
                 add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
+            t.save()
             return redirect('/login/')
 
     else:
@@ -94,7 +103,7 @@ def signup(request):
     #if form.cleaned_data.get('token'):
         #add_assignments_DB()
 
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'html/signup.html', {'form': form})
 
 
 def handle_source(source):
