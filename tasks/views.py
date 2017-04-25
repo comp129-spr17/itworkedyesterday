@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template.loader import get_template
 from django.template import Context
-from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category
+from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category, DB_Due
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
@@ -72,6 +72,30 @@ class EditForm(forms.Form):
     due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
 
+# class EditForm(forms.ModelForm):
+#     class Meta:
+#         model = DB_Tasks
+#         fields = ['task_name', 'points', 'priority', 'end_time']
+#         label = {
+#             'task_name': 'task_name',
+#             'points': 'points',
+#             'priority': 'priority',
+#             'end_time': 'due_date'
+#         }
+#         required = {
+#             'task_name': False,
+#             'points': False,
+#             'priority': False,
+#             'end_time': False
+#         }
+#         widget = {
+#             'task_name': forms.TextInput,
+#             'points': forms.NumberInput,
+#             'priority': forms.NumberInput,
+#             'end_time': DateTimeWidget(usel10n=True, bootstrap_version=3)
+#         }
+
+
 sorting_types = {
     "sort_by_points": "points",
     "sort_by_start_time": "start_time",
@@ -81,6 +105,10 @@ sorting_types = {
     "sort_by_default": "manual_rank",
     "sort_by_manual_rank": "manual_rank"
 }
+
+
+def home(request):
+    return redirect('/tasks/')
 
 
 def signup(request):
@@ -139,6 +167,17 @@ def complete_task(request, source, user_id, task_id):
     return handle_source(source)
 
 
+def handle_due_date(task):
+    try:
+        existing = DB_Due.objects.get(task=task)
+    except:
+        existing = None
+    if existing is not None:
+        existing.delete()
+    new = DB_Due(task=task, due=task.end_time, id=task.id)
+    new.save()
+
+
 def edit_task(request, source, user_id, task_id):
     if request.method == 'POST':
         selected_task = get_task(user_id, task_id)
@@ -154,6 +193,8 @@ def edit_task(request, source, user_id, task_id):
                 if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
                     selected_task.end_time = form.cleaned_data['due_date']
                 selected_task.save()
+                if selected_task.end_time is not None:
+                    handle_due_date(selected_task)
     else:
         form = EditForm()
     return sort_todos(request)
@@ -178,7 +219,8 @@ def add_task(request, source, user_id, list_id):
             if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
                 task.end_time = form.cleaned_data['due_date']
             task.save()
-            return sort_todos(request)
+            if task.end_time is not None:
+                handle_due_date(task)
     else:
         form = NameForm()
     return sort_todos(request)
@@ -343,14 +385,14 @@ def fill_in_user_ranks(user):
             item.save()
 
 
-def fill_in_database(request):
+def fill_ranks(request):
     list_of_lists = DB_TodoList.objects.all()
     for todolist in list_of_lists:
         list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
         for item in list_of_tasks:
             item.manual_rank = get_highest_rank(todolist) + 1
             item.save()
-    return redirect('/tasks/')
+    return redirect('/admin/')
 
 
 def drop_ranks(request):
@@ -360,7 +402,7 @@ def drop_ranks(request):
         for task in list_of_tasks:
             task.manual_rank = None
             task.save()
-    return redirect('/tasks/')
+    return redirect('/admin/')
 
 
 def drop_due(request):
@@ -368,4 +410,21 @@ def drop_due(request):
     for task in list_of_tasks:
         task.end_time = None
         task.save()
-    return redirect('/tasks/')
+    return redirect('/admin/')
+
+
+def fill_due(request):
+    list_of_tasks = DB_Tasks.objects.all()
+    for task in list_of_tasks:
+        if task.end_time is not None:
+            new = DB_Due(task=task, due=task.end_time, id=task.id)
+            new.save()
+    return redirect('/admin/')
+
+
+def admin_func(request, func=None):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return func(request)
+    else:
+        return redirect('/login/')

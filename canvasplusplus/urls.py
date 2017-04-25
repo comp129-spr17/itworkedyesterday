@@ -25,6 +25,7 @@ from tasks import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    url(r'^$', views.home),
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout, {'template_name': 'logout.html'}, name='logout'),
     url(r'^signup/$', views.signup, name='signup'),
@@ -42,9 +43,10 @@ urlpatterns = [
     url(r'^([.+/]?)completed/dwn/([0-9]+)/([0-9]+)/$', views.move_down, {'completed_val': True}),
     url(r'^([.+/]?)upw/([0-9]+)/([0-9]+)/$', views.move_up, {'completed_val': False}),
     url(r'^([.+/]?)dwn/([0-9]+)/([0-9]+)/$', views.move_down, {'completed_val': False}),
-    url(r'^fill/$', views.fill_in_database),
-    url(r'^drop/$', views.drop_due),
-    url(r'^drop/$', views.drop_ranks),
+    url(r'^fill/due/$', views.admin_func, {'func': views.fill_due}),
+    url(r'^fill/ranks/$', views.admin_func, {'func': views.fill_ranks}),
+    url(r'^drop/due/$', views.admin_func, {'func': views.drop_due}),
+    url(r'^drop/ranks/$', views.admin_func, {'func': views.drop_ranks}),
     #password reset
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
     url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),

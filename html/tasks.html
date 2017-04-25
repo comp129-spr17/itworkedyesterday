@@ -21,11 +21,33 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css"/>
     <script src="/static/js/bootstrap.js"></script>
+		<!--  jQuery -->
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+		<!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
+		<link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+
+		<!-- Bootstrap Date-Picker Plugin -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     {{ edit_form.media }}
 		{% analytical_head_bottom %}
 	</head>
 	<body>
 		{% analytical_body_top %}
+		<script>
+    $(document).ready(function(){
+      var date_input=$('input[name="date"]'); //our date input has the name "date"
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+      var options={
+        format: 'mm/dd/yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+      };
+      date_input.datepicker(options);
+    })
+</script>
 		<header class="navbar-inverse" role="banner">
 				<nav role="navigation">
 				  <div class="container-fluid">
@@ -47,11 +69,13 @@
 								<li><a href="/tasks/">Tasks</a></li>
 				        <li class="active"><a href="#">Completed</a><span class="sr-only">(current)</span></li>
 						  	<li><a href="/profile/">Profile</a></li>
+								{% if request.user.is_superuser %}<li><a href="/admin/">Admin</a></li>{% endif %}
 				        <li><a href="/logout/">Log Out</a></li>
 								{%else%}
 				        <li class="active"><a href="#">Tasks<span class="sr-only">(current)</span></a></li>
 				        <li><a href="/tasks/completed/">Completed</a></li>
 						  	<li><a href="/profile/">Profile</a></li>
+								{% if request.user.is_superuser %}<li><a href="/admin/">Admin</a></li>{% endif %}
 				        <li><a href="/logout/">Log Out</a></li>
 								{%endif%}
 				      </ul>

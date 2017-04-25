@@ -42,6 +42,7 @@ LOGIN_REDIRECT_URL = '/tasks/'
 # Application definition
 
 INSTALLED_APPS = [
+    'canvasplusplus',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,8 +51,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tasks',
     'datetimewidget',
-    'analytical'
+    'analytical',
 ]
+
 #password reset
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -140,8 +142,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#
-#
+# Analytics Services
 CLICKY_SITE_ID = '101041249'
 GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-97853138-1'
 GOOGLE_ANALYTICS_SITE_SPEED = True

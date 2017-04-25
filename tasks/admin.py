@@ -2,10 +2,10 @@
 * It Worked Yesterday...
 * 3/21/17
 * canvasplusplus.admin.py
-* Auto-generated Django file.
+* Handles the admin view.
 '''
 from django.contrib import admin
-from .models import DB_User, DB_TodoList, DB_Category, DB_Tasks
+from .models import DB_User, DB_TodoList, DB_Category, DB_Tasks, DB_Due
 
 
 class TaskAdmin(admin.ModelAdmin):
@@ -24,8 +24,13 @@ class ListAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('owner', )
 
+
+class DueAdmin(admin.ModelAdmin):
+    list_filter = ('due', )
+
+
 admin.site.register(DB_User, UserAdmin)
 admin.site.register(DB_TodoList, ListAdmin)
 admin.site.register(DB_Category)
 admin.site.register(DB_Tasks, TaskAdmin)
-# Register your models here.
+admin.site.register(DB_Due, DueAdmin)
