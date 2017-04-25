@@ -1,9 +1,15 @@
+'''
+* It Worked Yesterday...
+* 3/26/17
+* tasks.views.py
+* Renders webpages.
+'''
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template.loader import get_template
 from django.template import Context
-from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category
+from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category, DB_Due
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from enum import Enum
@@ -11,7 +17,9 @@ from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 from django import forms
+from django.contrib.admin import widgets
 
+from datetimewidget.widgets import DateTimeWidget
 from tasks.forms import SignUpForm
 from canvas import add_assignments_DB, get_avatar_url
 
@@ -33,26 +41,6 @@ class TasksObj:
 class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
-
-class TaskForm(forms.Form):
-    new_task = forms.CharField(label='new_task', required=True, max_length=256)
-
-
-class EditForm(forms.Form):
-    task_name = forms.CharField(label='task_name', required=False, max_length=256)
-    points = forms.IntegerField(label='point', required=False)
-    priority = forms.IntegerField(label='priority', required=False)
-
-
-sorting_types = {
-    "sort_by_points": "points",
-    "sort_by_start_time": "start_time",
-    "sort_by_due_time": "end_time",
-    "sort_by_name": "task_name",
-    "sort_by_priority": "priority",
-    "sort_by_default": "manual_rank",
-    "sort_by_manual_rank": "manual_rank"
-}
 
 def updateProfile(request):
     if request.user.is_authenticated:
@@ -93,9 +81,9 @@ def signup(request):
             if form.cleaned_data.get('canvas_token') != "":
                 t.canvas_token = form.cleaned_data.get('canvas_token')
                 t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
+                t.save()
                 todol = DB_TodoList.objects.get(owner=t.id)
                 add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
-            t.save()
             return redirect('/login/')
 
     else:
@@ -103,7 +91,59 @@ def signup(request):
     #if form.cleaned_data.get('token'):
         #add_assignments_DB()
 
-    return render(request, 'html/signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
+
+class TaskForm(forms.Form):
+    task_name = forms.CharField(label='task_name', required=True, max_length=256)
+    points = forms.IntegerField(label='point', required=False)
+    priority = forms.IntegerField(label='priority', required=False)
+    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+
+
+class EditForm(forms.Form):
+    task_name = forms.CharField(label='task_name', required=False, max_length=256)
+    points = forms.IntegerField(label='point', required=False)
+    priority = forms.IntegerField(label='priority', required=False)
+    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+
+
+# class EditForm(forms.ModelForm):
+#     class Meta:
+#         model = DB_Tasks
+#         fields = ['task_name', 'points', 'priority', 'end_time']
+#         label = {
+#             'task_name': 'task_name',
+#             'points': 'points',
+#             'priority': 'priority',
+#             'end_time': 'due_date'
+#         }
+#         required = {
+#             'task_name': False,
+#             'points': False,
+#             'priority': False,
+#             'end_time': False
+#         }
+#         widget = {
+#             'task_name': forms.TextInput,
+#             'points': forms.NumberInput,
+#             'priority': forms.NumberInput,
+#             'end_time': DateTimeWidget(usel10n=True, bootstrap_version=3)
+#         }
+
+
+sorting_types = {
+    "sort_by_points": "points",
+    "sort_by_start_time": "start_time",
+    "sort_by_due_time": "end_time",
+    "sort_by_name": "task_name",
+    "sort_by_priority": "priority",
+    "sort_by_default": "manual_rank",
+    "sort_by_manual_rank": "manual_rank"
+}
+
+
+def home(request):
+    return redirect('/tasks/')
 
 
 def handle_source(source):
@@ -116,6 +156,8 @@ def handle_source(source):
 def create_task(user, list_id, name):
     return DB_Tasks(user=user, task_name=name, todo_list=list_id, category="Default")
 
+def create_list(user, list_name, service='Defauly'):
+    return DB_TodoList(owner=user, name=list_name, service=source)
 
 def get_task(user_id, task_id):
     return DB_Tasks.objects.get(user=user_id, id=task_id)
@@ -136,6 +178,17 @@ def complete_task(request, source, user_id, task_id):
     return handle_source(source)
 
 
+def handle_due_date(task):
+    try:
+        existing = DB_Due.objects.get(task=task)
+    except:
+        existing = None
+    if existing is not None:
+        existing.delete()
+    new = DB_Due(task=task, due=task.end_time, id=task.id)
+    new.save()
+
+
 def edit_task(request, source, user_id, task_id):
     if request.method == 'POST':
         selected_task = get_task(user_id, task_id)
@@ -148,7 +201,11 @@ def edit_task(request, source, user_id, task_id):
                     selected_task.points = form.cleaned_data['points']
                 if form.cleaned_data['priority'] is not None:
                     selected_task.priority = form.cleaned_data['priority']
+                if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
+                    selected_task.end_time = form.cleaned_data['due_date']
                 selected_task.save()
+                if selected_task.end_time is not None:
+                    handle_due_date(selected_task)
     else:
         form = EditForm()
     return sort_todos(request)
@@ -158,14 +215,23 @@ def add_task(request, source, user_id, list_id):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            new_task = form.cleaned_data['new_task']
+            new_task = form.cleaned_data['task_name']
             owner = DB_User.objects.get(id=user_id)
             containing_list = DB_TodoList.objects.get(id=list_id)
             category = DB_Category.objects.get(id=1)
             task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
-                            completed=False, points=0, point_type="Default", category=category, manual_rank=get_highest_rank(containing_list)+1)
+                            completed=False, points=0, point_type="Default",
+                            category=category, manual_rank=get_highest_rank(containing_list)+1,
+                            start_time=datetime.now(), end_time=None)
+            if form.cleaned_data['points'] is not None:
+                task.points = form.cleaned_data['points']
+            if form.cleaned_data['priority'] is not None:
+                task.priority = form.cleaned_data['priority']
+            if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
+                task.end_time = form.cleaned_data['due_date']
             task.save()
-            return sort_todos(request)
+            if task.end_time is not None:
+                handle_due_date(task)
     else:
         form = NameForm()
     return sort_todos(request)
@@ -330,14 +396,14 @@ def fill_in_user_ranks(user):
             item.save()
 
 
-def fill_in_database(request):
+def fill_ranks(request):
     list_of_lists = DB_TodoList.objects.all()
     for todolist in list_of_lists:
         list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
         for item in list_of_tasks:
             item.manual_rank = get_highest_rank(todolist) + 1
             item.save()
-    return redirect('/tasks/')
+    return redirect('/admin/')
 
 
 def drop_ranks(request):
@@ -347,4 +413,29 @@ def drop_ranks(request):
         for task in list_of_tasks:
             task.manual_rank = None
             task.save()
-    return redirect('/tasks/')
+    return redirect('/admin/')
+
+
+def drop_due(request):
+    list_of_tasks = DB_Tasks.objects.all()
+    for task in list_of_tasks:
+        task.end_time = None
+        task.save()
+    return redirect('/admin/')
+
+
+def fill_due(request):
+    list_of_tasks = DB_Tasks.objects.all()
+    for task in list_of_tasks:
+        if task.end_time is not None:
+            new = DB_Due(task=task, due=task.end_time, id=task.id)
+            new.save()
+    return redirect('/admin/')
+
+
+def admin_func(request, func=None):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return func(request)
+    else:
+        return redirect('/login/')
