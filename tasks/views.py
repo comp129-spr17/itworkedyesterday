@@ -58,7 +58,7 @@ def updateProfile(request):
                     user.canvas_avatar_url = get_avatar_url(user_form.cleaned_data.get('canvas_token'))
                 else:
                     user.canvas_token = ""
-                    user.canvas_avatar_url = ""
+                    user.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
                 user.save()
                 return redirect('/profile/')
         else:
@@ -81,9 +81,11 @@ def signup(request):
             if form.cleaned_data.get('canvas_token') != "":
                 t.canvas_token = form.cleaned_data.get('canvas_token')
                 t.canvas_avatar_url = get_avatar_url(form.cleaned_data.get('canvas_token'))
-                t.save()
                 todol = DB_TodoList.objects.get(owner=t.id)
                 add_assignments_DB(todol, todol.owner, form.cleaned_data.get('canvas_token'))
+            else:
+                t.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
+            t.save()
             return redirect('/login/')
 
     else:

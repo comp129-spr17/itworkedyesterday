@@ -266,6 +266,15 @@ def add_assignments_DB(TodolistID, UserID, user_token):
                 count = count + 1
                 a.save()
 
+'''
+def update_assignments_DB(user_token):
+    course_data = get_favorite_courses(user_token)
+    count = 1
+    for favorite_course in course_data:
+
+        assignments_data = get_assignments(str(favorite_course['id']),user_token)
+        for assignments_data in assignments_data:
+'''
 
 def handle_potential_none_points(points):
     if points is None:
