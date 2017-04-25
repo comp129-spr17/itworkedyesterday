@@ -1,3 +1,9 @@
+'''
+* It Worked Yesterday...
+* 3/26/17
+* tasks.views.py
+* Renders webpages.
+'''
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
@@ -11,8 +17,10 @@ from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 from django import forms
+from django.contrib.admin import widgets
 
-from tasks.forms import SignUpForm
+from datetimewidget.widgets import DateTimeWidget
+from tasks.forms import SignUpForm, ProfileForm
 from canvas import add_assignments_DB, get_avatar_url
 
 # Create your views here.
@@ -37,7 +45,7 @@ class Direction(Enum):
 
 class ProfileUpdate(UpdateView):
     model = User
-    fields = ('username', 'first_name', 'last_name', 'email')
+    form_class = ProfileForm
     template_name = 'profile.html'
     success_url = reverse_lazy('login') # This is where the user will be
                                        # redirected once the form
@@ -51,13 +59,17 @@ class ProfileUpdate(UpdateView):
 
 
 class TaskForm(forms.Form):
-    new_task = forms.CharField(label='new_task', required=True, max_length=256)
+    task_name = forms.CharField(label='task_name', required=True, max_length=256)
+    points = forms.IntegerField(label='point', required=False)
+    priority = forms.IntegerField(label='priority', required=False)
+    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
 
 class EditForm(forms.Form):
     task_name = forms.CharField(label='task_name', required=False, max_length=256)
     points = forms.IntegerField(label='point', required=False)
     priority = forms.IntegerField(label='priority', required=False)
+    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
 
 sorting_types = {
@@ -139,6 +151,8 @@ def edit_task(request, source, user_id, task_id):
                     selected_task.points = form.cleaned_data['points']
                 if form.cleaned_data['priority'] is not None:
                     selected_task.priority = form.cleaned_data['priority']
+                if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
+                    selected_task.end_time = form.cleaned_data['due_date']
                 selected_task.save()
     else:
         form = EditForm()
@@ -149,12 +163,20 @@ def add_task(request, source, user_id, list_id):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            new_task = form.cleaned_data['new_task']
+            new_task = form.cleaned_data['task_name']
             owner = DB_User.objects.get(id=user_id)
             containing_list = DB_TodoList.objects.get(id=list_id)
             category = DB_Category.objects.get(id=1)
             task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
-                            completed=False, points=0, point_type="Default", category=category)
+                            completed=False, points=0, point_type="Default",
+                            category=category, manual_rank=get_highest_rank(containing_list)+1,
+                            start_time=datetime.now(), end_time=None)
+            if form.cleaned_data['points'] is not None:
+                task.points = form.cleaned_data['points']
+            if form.cleaned_data['priority'] is not None:
+                task.priority = form.cleaned_data['priority']
+            if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
+                task.end_time = form.cleaned_data['due_date']
             task.save()
             return sort_todos(request)
     else:
@@ -338,4 +360,12 @@ def drop_ranks(request):
         for task in list_of_tasks:
             task.manual_rank = None
             task.save()
+    return redirect('/tasks/')
+
+
+def drop_due(request):
+    list_of_tasks = DB_Tasks.objects.all()
+    for task in list_of_tasks:
+        task.end_time = None
+        task.save()
     return redirect('/tasks/')

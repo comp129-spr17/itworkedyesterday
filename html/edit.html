@@ -1,3 +1,8 @@
+<!--
+* It Worked Yesterday...
+* 4/17/17
+* html.edit.html
+* Template for the edit form.-->
 <div id="edit_modal_{{item.id}}" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -10,8 +15,8 @@
         <div class="input-group">
           <form action="/edt/{{ user_id }}/{{ item.id }}/" method="post">
             {% csrf_token %}
-            {{ edit_form }}
-            <div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Create"></div>
+            {{ edit_form.as_table }}
+            <div class="modal-footer"><input type="submit" class="btn btn-xs btn-success" value="Edit"></div>
           </form>
         </div>
       </div>

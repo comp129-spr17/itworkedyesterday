@@ -1,3 +1,5 @@
-BeautifulSoup==4.5.3
-Django=1.10.6
-psycopg2=2.7.1
+beautifulsoup4>=4.5.3
+Django>=1.10.6
+psycopg2>=2.7.1
+django-datetime-widget>=0.9.3
+django-analytical>=2.2.2

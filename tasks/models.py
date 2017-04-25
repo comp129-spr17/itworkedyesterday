@@ -1,3 +1,9 @@
+'''
+* It Worked Yesterday...
+* 3/20/17
+* tasks.models.py
+* Represents all database objects as Python classes.
+'''
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -5,11 +11,14 @@ from django.dispatch import receiver
 
 
 class DB_User(models.Model):
-    username = models.CharField(max_length=16, blank=False)
-    canvas_token = models.CharField(max_length=256, null=True)
-    canvas = models.CharField(max_length=256, null=True)
-    canvas_avatar_url = models.CharField(max_length=256, null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    username = models.CharField(max_length=16, blank=False, verbose_name ='Username')
+    canvas_token = models.CharField(max_length=256, null=True, verbose_name ='Canvas Token')
+    canvas = models.CharField(max_length=256, null=True, verbose_name ='Canvas ID')
+    canvas_avatar_url = models.CharField(max_length=256, null=True, verbose_name ='Canvas Avatar URL')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, verbose_name ='Auth User ID')
+    def __str__(self):
+        return self.username
+
 
 
 @receiver(post_save, sender=User)
@@ -25,27 +34,33 @@ def make_default_list(sender, instance, created, **kwargs):
 
 
 class DB_TodoList(models.Model):
-    owner = models.ForeignKey(DB_User, on_delete=models.CASCADE, blank=False)
-    name = models.CharField(max_length=64, blank=False)
-    color = models.CharField(max_length=16, null=True)
-    canvas_course = models.CharField(max_length=256, null=True)
-    service = models.CharField(max_length=16, blank=False)
+    owner = models.ForeignKey(DB_User, on_delete=models.CASCADE, blank=False, verbose_name ='Owner ID')
+    name = models.CharField(max_length=64, blank=False, verbose_name ='List Name')
+    color = models.CharField(max_length=16, null=True, verbose_name ='List Color')
+    canvas_course = models.CharField(max_length=256, null=True, verbose_name ='Canvas Course ID')
+    service = models.CharField(max_length=16, blank=False, verbose_name ='Service')
+    def __str__(self):
+        return self.name
 
 
 class DB_Category(models.Model):
     name = models.CharField(max_length=256, blank=False)
+    def __str__(self):
+        return self.name
 
 
 class DB_Tasks(models.Model):
-    todo_list = models.ForeignKey(DB_TodoList, on_delete=models.CASCADE, null=False)
-    user = models.ForeignKey(DB_User, on_delete=models.CASCADE, null=False)
-    category = models.ForeignKey(DB_Category, on_delete=models.CASCADE, null=True)
-    task_name = models.CharField(max_length=256, null=False)
-    start_time = models.DateTimeField(auto_now=True, null=True)
-    end_time = models.DateTimeField(auto_now=True, null=True)
-    points = models.IntegerField(null=True)
-    point_type = models.CharField(max_length=16, null=True)
-    completed = models.BooleanField(blank=True)
-    priority = models.IntegerField(null=True)
-    manual_rank = models.IntegerField(null=True)
-    point_priority = models.FloatField(null=True)
+    todo_list = models.ForeignKey(DB_TodoList, on_delete=models.CASCADE, null=False, verbose_name ='List')
+    user = models.ForeignKey(DB_User, on_delete=models.CASCADE, null=False, verbose_name ='Owner')
+    category = models.ForeignKey(DB_Category, on_delete=models.CASCADE, null=True, verbose_name ='Category')
+    task_name = models.CharField(max_length=256, null=False, verbose_name ='Task Name')
+    start_time = models.DateTimeField(auto_now=True, null=True, verbose_name ='Creation Time')
+    end_time = models.DateTimeField(auto_now=False, null=True, verbose_name ='Due Date')
+    points = models.IntegerField(null=True, verbose_name ='Points')
+    point_type = models.CharField(max_length=16, null=True, verbose_name ='Type of Points')
+    completed = models.BooleanField(blank=True, verbose_name ='Is Completed?')
+    priority = models.IntegerField(null=True, verbose_name ='Priority')
+    manual_rank = models.IntegerField(null=True, verbose_name ='Manual Rank')
+    point_priority = models.FloatField(null=True, verbose_name ='Point Priority')
+    def __str__(self):
+        return self.task_name

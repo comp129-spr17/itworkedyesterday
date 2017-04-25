@@ -9,7 +9,7 @@ from urllib import request as request
 from urllib import error as url_error
 import logging
 from enum import Enum
-from typing import Dict
+#from typing import Dict
 from bs4 import BeautifulSoup
 from tasks.models import DB_Tasks,DB_User,DB_Category,DB_TodoList
 import logging
@@ -19,10 +19,12 @@ import codecs
 import datetime
 import sys
 
+
 '''Global variables'''
 reader = codecs.getreader('utf-8')  # This exists to help the json and urllib libraries work together.
 pp = pprint.PrettyPrinter(indent=4)  # Print out larger, data objects in a readable manner.
 service_url = "https://pacific.instructure.com/api/v1/"  # The site that we're pulling our data from.
+
 
 class Service(Enum):
     ORIGINAL = 0
@@ -31,7 +33,6 @@ class Service(Enum):
 
 '''Pass in a Profile object'''
 class User:
-
     def __init__(self, data, user_token):
         self.id = data['id']
         self.name = data['name']
@@ -41,6 +42,7 @@ class User:
         self.token = None
         self.user_token = user_token
         self.ToDoLists = []
+
 
     def __str__(self):
         to_return = ''
@@ -61,6 +63,7 @@ class User:
             logging.error('Unable to pull courses from User class: KeyError')
         return to_return
 
+
     def add(self, data):
         # If the data is a list, the data is a list of course objects
         if type(data) is list:
@@ -72,10 +75,13 @@ class User:
             self.token = data
         else:
             logging.debug("Data type not recognized")
+
+
     def display(self):
         for course in self.ToDoLists:
             for assignment in course.assignment_tasks:
                 print(assignment.assignment, ": " ,assignment.weight)
+
 
 '''Pass in a Course object as data.'''
 class TodoList:
@@ -101,6 +107,7 @@ class TodoList:
             assignment.total_points = self.total
             assignment.calc_weight()
 
+
     def __str__(self):
         to_return = ''
         to_return +=\
@@ -108,8 +115,10 @@ class TodoList:
             .format(self.canvas_id, self.name, self.canvas_account, self.canvas_term, self.__sizeof__())
         return to_return
 
+
     def __sizeof__(self):
         return len(self.assignment_tasks)
+
 
     def add(self, data):
         if type(data) is dict:
@@ -229,9 +238,11 @@ def time_estimate(usertoken):
         input_time[course['name']] = time
     return input_time
 
+
 def get_avatar_url(user_token):
     profile = get_user(user_token)
     return profile['avatar_url']
+
 
 def add_assignments_DB(TodolistID, UserID, user_token):
     course_data = get_favorite_courses(user_token)
@@ -255,10 +266,12 @@ def add_assignments_DB(TodolistID, UserID, user_token):
                 count = count + 1
                 a.save()
 
+
 def handle_potential_none_points(points):
     if points is None:
         points = 0
     return points
+
 
 def main():
     global user_token  # The token used to authenticate the user.
@@ -301,6 +314,7 @@ def main():
             print('\t\t\t\t', 'Time Needed to Complete: ', time_needed[favorite_course['name']], " minutes")
         #print(favorite_course['name'], " Total Points: ", total)
     '''
+
     user.display()
     print("\nUser Object string output:")
     print(user)

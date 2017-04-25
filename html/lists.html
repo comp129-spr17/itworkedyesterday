@@ -1,7 +1,12 @@
+<!--
+* It Worked Yesterday...
+* 4/13/17
+* html.lists.html
+* Template displaying all lists that the user has.-->
 {% for todo_list in todo_lists %}
   <div class="listContainer">
     <div class="heading">
-      {{ todo_list.name }}: {{ todo_list.id }}
+      {{ todo_list.name }}
       <!-- Trigger the modal with a button -->
       <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#add_modal_{{todo_list.id}}" id="newButton">New</button>
       <div class="dropdown" id="dropdownmenu_">
