@@ -20,7 +20,7 @@ from django import forms
 from django.contrib.admin import widgets
 
 from datetimewidget.widgets import DateTimeWidget
-from tasks.forms import SignUpForm
+from tasks.forms import SignUpForm, ProfileForm
 from canvas import add_assignments_DB, get_avatar_url
 
 # Create your views here.
@@ -48,21 +48,25 @@ def updateProfile(request):
 
 
         if request.method == 'POST':
-            user_form = SignUpForm(request.POST, instance=request.user)
+            user_form = ProfileForm(request.POST, instance=request.user)
             if user_form.is_valid():
                 user_form.save()
                 username = user_form.cleaned_data.get('username')
                 user.username = username
+                if user_form.cleaned_data.get('canvas_avatar_url') != "":
+                    user.canvas_avatar_url = user_form.cleaned_data.get('canvas_avatar_url')
+                else:
+                    user.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
                 if user_form.cleaned_data.get('canvas_token') != "":
                     user.canvas_token = user_form.cleaned_data.get('canvas_token')
-                    user.canvas_avatar_url = get_avatar_url(user_form.cleaned_data.get('canvas_token'))
+                    #user.canvas_avatar_url = get_avatar_url(user_form.cleaned_data.get('canvas_token'))
                 else:
                     user.canvas_token = ""
                     user.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
                 user.save()
-                return redirect('/profile/')
+                return redirect('/login/')
         else:
-            user_form = SignUpForm(instance=request.user)
+            user_form = ProfileForm(instance=request.user)
         return render(request, 'profile.html', {'user_form': user_form} )
     else:
         redirect('/login/')

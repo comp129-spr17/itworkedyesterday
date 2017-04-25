@@ -22,7 +22,8 @@ class SignUpForm(UserCreationForm):
 
 class ProfileForm(forms.ModelForm):
     canvas_token = forms.CharField(max_length=100, required=False)
+    canvas_avatar_url = forms.CharField(max_length=300, required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'canvas_token' )
+        fields = ('username', 'first_name', 'last_name', 'email', 'canvas_token', 'canvas_avatar_url')
