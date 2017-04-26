@@ -3,6 +3,7 @@
 * 4/18/17
 * html.individual_task.html
 * Template for a single task.-->
+{% with item_group.db_task as item %}
 <div class="taskText">
     <li id="onHover"><b>{{ item.task_name }}</b></li>
   <div class="showOnHover">
@@ -19,3 +20,4 @@
   </div>
 </div>
 {% include edit %}
+{% endwith %}

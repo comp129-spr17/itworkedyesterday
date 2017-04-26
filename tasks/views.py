@@ -18,6 +18,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.admin import widgets
+from django.core.exceptions import ObjectDoesNotExist
 
 from datetimewidget.widgets import DateTimeWidget
 from tasks.forms import SignUpForm, ProfileForm
@@ -70,30 +71,13 @@ class EditForm(forms.Form):
     points = forms.IntegerField(label='point', required=False)
     priority = forms.IntegerField(label='priority', required=False)
     due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
-
-
-# class EditForm(forms.ModelForm):
-#     class Meta:
-#         model = DB_Tasks
-#         fields = ['task_name', 'points', 'priority', 'end_time']
-#         label = {
-#             'task_name': 'task_name',
-#             'points': 'points',
-#             'priority': 'priority',
-#             'end_time': 'due_date'
-#         }
-#         required = {
-#             'task_name': False,
-#             'points': False,
-#             'priority': False,
-#             'end_time': False
-#         }
-#         widget = {
-#             'task_name': forms.TextInput,
-#             'points': forms.NumberInput,
-#             'priority': forms.NumberInput,
-#             'end_time': DateTimeWidget(usel10n=True, bootstrap_version=3)
-#         }
+    def __init__(self, task=None, *args, **kwargs):
+        super(EditForm, self).__init__(*args, **kwargs)
+        if task is not None:
+            self.fields['task_name'] = forms.CharField(label='task_name', required=True, max_length=256, initial=task.task_name)
+            self.fields['points'] = forms.IntegerField(label='point', required=False, initial=task.points)
+            self.fields['priority'] = forms.IntegerField(label='priority', required=False, initial=task.priority)
+            self.fields['due_date'] = forms.DateTimeField(label='due_date', required=False, initial=task.end_time, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
 
 sorting_types = {
@@ -172,7 +156,7 @@ def complete_task(request, source, user_id, task_id):
 def handle_due_date(task):
     try:
         existing = DB_Due.objects.get(task=task)
-    except:
+    except ObjectDoesNotExist:
         existing = None
     if existing is not None:
         existing.delete()
@@ -186,14 +170,10 @@ def edit_task(request, source, user_id, task_id):
         form = EditForm(request.POST)
         if form.is_valid():
             if selected_task is not None:
-                if form.cleaned_data['task_name'] is not None and form.cleaned_data['task_name'] != "":
-                    selected_task.task_name = form.cleaned_data['task_name']
-                if form.cleaned_data['points'] is not None:
-                    selected_task.points = form.cleaned_data['points']
-                if form.cleaned_data['priority'] is not None:
-                    selected_task.priority = form.cleaned_data['priority']
-                if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
-                    selected_task.end_time = form.cleaned_data['due_date']
+                selected_task.task_name = form.cleaned_data['task_name']
+                selected_task.points = form.cleaned_data['points']
+                selected_task.priority = form.cleaned_data['priority']
+                selected_task.end_time = form.cleaned_data['due_date']
                 selected_task.save()
                 if selected_task.end_time is not None:
                     handle_due_date(selected_task)
@@ -306,12 +286,13 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
         todo_list_names = []
         i = 0
         new_task_form = TaskForm()
-        edit_task_form = EditForm()
         for cur_list in lists:
             this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val).order_by(key)
-            list_object = Todos(cur_list.name, [], cur_list.id)
-            for item in this_list:
-                list_object.todos.append(item)
+            sub_list = []
+            for todo in this_list:
+                task = TasksObj(todo, EditForm(task=todo))
+                sub_list.append(task)
+            list_object = Todos(cur_list.name, sub_list, cur_list.id)
             todos.append(list_object)
 
         return render(request, 'tasks.html', {'todo_lists': todos,
@@ -321,7 +302,6 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
                                               'user_id': user.id,
                                               'imgurl': user.canvas_avatar_url,
                                               'new_form': new_task_form,
-                                              'edit_form': edit_task_form,
                                               'list': get_template('list.html'),
                                               'lists': get_template('lists.html'),
                                               'add': get_template('add.html'),
