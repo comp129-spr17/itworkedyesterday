@@ -42,6 +42,7 @@ LOGIN_REDIRECT_URL = '/tasks/'
 # Application definition
 
 INSTALLED_APPS = [
+    'canvasplusplus',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,10 +51,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tasks',
     'datetimewidget',
-    'analytical'
+    'analytical',
+    'django_cron'
 ]
+
 #password reset
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,9 +145,23 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#
-#
+# Analytics Services
 CLICKY_SITE_ID = '101041249'
 GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-97853138-1'
 GOOGLE_ANALYTICS_SITE_SPEED = True
 MIXPANEL_API_TOKEN = '4134595f15f5dd12c4286218d6c576dc'
+
+# Email Information
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'canvasplusplus'
+EMAIL_HOST_PASSWORD = 'itworkedyesterday2'
+EMAIL_USE_TLS = True
+EFAULT_FROM_EMAIL = 'TestSite Team <noreply@example.com>'
+
+
+# Cron classes
+# Ran when runcron is called
+CRON_CLASSES = [
+    'tasks.notifications.MyCronJob'
+]

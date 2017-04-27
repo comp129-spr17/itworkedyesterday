@@ -75,25 +75,25 @@
 	margin: 0 20% 0 20%;
 }
 
-#taskOptions{
+.taskBlock:hover .buttonGroup{
+	display: block;
+	float: right;
+	padding-right: 25px;
+	padding-top: 25px;
+}
+
+.buttonGroup{
 	display: none;
 }
 
-#todoList li{
+.taskText li{
 	padding: 10px;
 	list-style: none;
-	display: block;
-}
-
-#todoList li:hover #taskOptions{
 	display: inline-block;
-	float: right;
 }
 
 .listContainer .heading .dropdown{
 	display: inline-block;
 	float: right;
-	padding: 10px;
-	margin-right: 100px;
-
+	margin-right: 25px;
 }

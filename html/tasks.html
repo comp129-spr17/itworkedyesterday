@@ -21,7 +21,11 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css"/>
     <script src="/static/js/bootstrap.js"></script>
-    {{ edit_form.media }}
+		{% for todo_list in todo_lists %}
+			{% for item_group in todo_list.todos %}
+				{{item_group.edit_form.media}}
+			{% endfor %}
+		{% endfor %}
 		{% analytical_head_bottom %}
 	</head>
 	<body>
@@ -48,11 +52,13 @@
 								<li><a href="/tasks/">Tasks</a></li>
 				        <li class="active"><a href="#">Completed</a><span class="sr-only">(current)</span></li>
 						  	<li><a href="/profile/">Profile</a></li>
+								{% if request.user.is_superuser %}<li><a href="/admin/">Admin</a></li>{% endif %}
 				        <li><a href="/logout/">Log Out</a></li>
 								{%else%}
 				        <li class="active"><a href="#">Tasks<span class="sr-only">(current)</span></a></li>
 				        <li><a href="/tasks/completed/">Completed</a></li>
 						  	<li><a href="/profile/">Profile</a></li>
+								{% if request.user.is_superuser %}<li><a href="/admin/">Admin</a></li>{% endif %}
 				        <li><a href="/logout/">Log Out</a></li>
 								{%endif%}
 				      </ul>

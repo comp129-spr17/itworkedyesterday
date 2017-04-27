@@ -4,7 +4,7 @@
 * html.list.html
 * Template for displaying a single list.-->
 {%if not todo_list.todos|length_is:"0"%}
-  {%for item in todo_list.todos%}
+  {%for item_group in todo_list.todos%}
     {%include individual_task%}
   {% endfor %}
 {%else%}

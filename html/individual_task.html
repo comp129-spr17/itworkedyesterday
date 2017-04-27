@@ -3,19 +3,25 @@
 * 4/18/17
 * html.individual_task.html
 * Template for a single task.-->
+{% with item_group.db_task as item %}
+<div class="taskBlock">
 <div class="taskText">
     <li id="onHover"><b>{{ item.task_name }}</b></li>
+    <div class="buttonGroup">
+      <a href="/com/{{ item.user_id }}/{{ item.id }}/" class="btn btn-sm btn-success">{% if item.completed %}Uncomplete{%else%}Complete{% endif %}</a>
+      {# <a href="#" class="btn btn-sm btn-warning">Edit</a>#}
+      <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#edit_modal_{{item.id}}" id="newButton">Edit</button>
+      <a href="/rem/{{ item.user_id }}/{{ item.id }}/" class="btn btn-sm btn-danger">Delete</a>
+      {% if in_manual_rank_mode %}
+      <a href="/upw/{{ item.user_id }}/{{ item.id }}/" class="btn btn-sm btn-primary">⬆︎</a>
+      <a href="/dwn/{{ item.user_id }}/{{ item.id }}/" class="btn btn-sm btn-primary">⬇︎</a>{% endif %}
+    </div>
+</div>
   <div class="showOnHover">
     <div class="taskInfo">
         <p>&nbsp;&nbsp;<b>Points:</b> {{ item.points }} &nbsp;<b>Priority:</b> {{ item.priority }} {% if item.end_time is not None %}<b>Due Date:</b> {{ item.end_time }}{% endif %}</p>
-        </div>
-          <a href="/com/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-success">{% if item.completed %}Uncomplete{%else%}Complete{% endif %}</a>
-          {# <a href="#" class="btn btn-xs btn-warning">Edit</a>#}
-          <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#edit_modal_{{item.id}}" id="newButton">Edit</button>
-          <a href="/rem/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-danger">Delete</a>
-          {% if in_manual_rank_mode %}
-          <a href="/upw/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-primary">⬆︎</a>
-          <a href="/dwn/{{ item.user_id }}/{{ item.id }}/" class="btn btn-xs btn-primary">⬇︎</a>{% endif %}
+    </div>
   </div>
 </div>
 {% include edit %}
+{% endwith %}

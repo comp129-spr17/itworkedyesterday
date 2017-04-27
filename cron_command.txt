@@ -1,0 +1,1 @@
+5 * * * * python3 itworkedyesterday/manage.py runcrons >/dev/null 2>&1
