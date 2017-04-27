@@ -156,9 +156,9 @@ EMAIL_HOST_USER = 'canvasplusplus'
 EMAIL_HOST_PASSWORD = 'itworkedyesterday2'
 EMAIL_USE_TLS = True
 
-#
-#
-#
+
+# Cron classes
+# Ran when runcron is called
 CRON_CLASSES = [
     'tasks.notifications.MyCronJob'
 ]

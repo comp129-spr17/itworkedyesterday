@@ -38,5 +38,6 @@ def check_to_notify():
     list_of_due = DB_Due.objects.all()
     for task in list_of_due:
         if task.due < datetime.datetime.now():
-            notify_all(task)
+            real_task = DB_Tasks.objects.get(id=task.id)
+            notify_all(real_task)
             task.delete()
