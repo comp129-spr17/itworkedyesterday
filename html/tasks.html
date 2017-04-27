@@ -26,6 +26,7 @@
 	</head>
 	<body>
 		{% analytical_body_top %}
+		{% include new_list %}
 		<header class="navbar-inverse" role="banner">
 				<nav role="navigation">
 				  <div class="container-fluid">
@@ -61,8 +62,10 @@
 				</nav>
 		</header>
 		<p>Welcome, {{username}}.</p><p><img src={{ imgurl }} alt= {{ username }} height="100" width="100"></p>
-		{% include lists %}
+		<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#new_list" id="newListButton">New List</button>
+		<!--TODO: Make me do shit -->
 
+		{% include lists %}
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

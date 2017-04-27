@@ -119,7 +119,7 @@ def handle_source(source):
 def create_task(user, list_id, name):
     return DB_Tasks(user=user, task_name=name, todo_list=list_id, category="Default")
 
-def create_list(user, list_name, service='Defauly'):
+def create_list(user, list_name, service='Default'):
     return DB_TodoList(owner=user, name=list_name, service=source)
 
 def get_task(user_id, task_id):
@@ -285,7 +285,8 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
                                               'add': get_template('add.html'),
                                               'edit': get_template('edit.html'),
                                               'sorting': get_template('sorting.html'),
-                                              'individual_task': get_template('individual_task.html')})
+                                              'individual_task': get_template('individual_task.html'),
+                                              'new_list': get_template('new_list.html')})
     else:
         return redirect('/login/')
 
