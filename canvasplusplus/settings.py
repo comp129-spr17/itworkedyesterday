@@ -56,7 +56,9 @@ INSTALLED_APPS = [
 ]
 
 #password reset
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -155,6 +157,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'canvasplusplus'
 EMAIL_HOST_PASSWORD = 'itworkedyesterday2'
 EMAIL_USE_TLS = True
+EFAULT_FROM_EMAIL = 'TestSite Team <noreply@example.com>'
 
 
 # Cron classes
