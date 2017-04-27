@@ -123,6 +123,13 @@ class EditForm(forms.Form):
             self.fields['due_date'] = forms.DateTimeField(label='due_date', required=False, initial=task.end_time, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
 
+class EditFormForProcessing(forms.Form):
+    task_name = forms.CharField(label='task_name', required=False, max_length=256)
+    points = forms.IntegerField(label='point', required=False)
+    priority = forms.IntegerField(label='priority', required=False)
+    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+
+
 sorting_types = {
     "sort_by_points": "points",
     "sort_by_start_time": "start_time",
@@ -184,7 +191,7 @@ def handle_due_date(task):
 def edit_task(request, source, user_id, task_id):
     if request.method == 'POST':
         selected_task = get_task(user_id, task_id)
-        form = EditForm(request.POST)
+        form = EditFormForProcessing(request.POST)
         if form.is_valid():
             if selected_task is not None:
                 selected_task.task_name = form.cleaned_data['task_name']
@@ -195,7 +202,7 @@ def edit_task(request, source, user_id, task_id):
                 if selected_task.end_time is not None:
                     handle_due_date(selected_task)
     else:
-        form = EditForm()
+        form = EditFormForProcessing()
     return sort_todos(request)
 
 
