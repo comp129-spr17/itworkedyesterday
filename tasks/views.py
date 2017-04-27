@@ -6,7 +6,7 @@
 '''
 from datetime import datetime
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
 from django.template.loader import get_template
 from django.template import Context
 from tasks.models import DB_User, DB_TodoList, DB_Tasks, DB_Category, DB_Due
@@ -190,7 +190,10 @@ def handle_due_date(task):
 
 def edit_task(request, source, user_id, task_id):
     if request.method == 'POST':
-        selected_task = get_task(user_id, task_id)
+        try:
+            selected_task = get_task(user_id, task_id)
+        except ObjectDoesNotExist:
+            return Http404("Task does not exist.")
         form = EditFormForProcessing(request.POST)
         if form.is_valid():
             if selected_task is not None:
@@ -211,8 +214,11 @@ def add_task(request, source, user_id, list_id):
         form = TaskForm(request.POST)
         if form.is_valid():
             new_task = form.cleaned_data['task_name']
-            owner = DB_User.objects.get(id=user_id)
-            containing_list = DB_TodoList.objects.get(id=list_id)
+            try:
+                owner = DB_User.objects.get(id=user_id)
+                containing_list = DB_TodoList.objects.get(id=list_id, owner=owner)
+            except ObjectDoesNotExist:
+                return Http404("List does not exist.")
             category = DB_Category.objects.get(id=1)
             task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
                             completed=False, points=0, point_type="Default",
@@ -233,8 +239,11 @@ def add_task(request, source, user_id, list_id):
 
 
 def move_up(request, source, user_id, task_id, completed_val):
-    selected_task = get_task(user_id, task_id)
-    user = DB_User(id=user_id)
+    try:
+        selected_task = get_task(user_id, task_id)
+        user = DB_User(id=user_id)
+    except ObjectDoesNotExist:
+        return Http404("Task does not exist.")
     above_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('manual_rank')
     above_task = None
     for task in above_tasks:
@@ -260,8 +269,11 @@ def move_up(request, source, user_id, task_id, completed_val):
 
 
 def move_down(request, source, user_id, task_id, completed_val):
-    selected_task = get_task(user_id, task_id)
-    user = DB_User(id=user_id)
+    try:
+        selected_task = get_task(user_id, task_id)
+        user = DB_User(id=user_id)
+    except ObjectDoesNotExist:
+        return Http404("Task does not exist.")
     below_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('-manual_rank')
     below_task = None
     for task in below_tasks:
@@ -296,7 +308,10 @@ HOW-TO:
 def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDING, completed_val=False):
     if request.user.is_authenticated:
         template = get_template('tasks.html')
-        user = DB_User.objects.get(user=request.user.id)
+        try:
+            user = DB_User.objects.get(user=request.user.id)
+        except ObjectDoesNotExist:
+            return Http404("User does not exist.")
         key = sorting_types.get(key, key)
         if direction == Direction.DESCENDING:
             key = '-' + key
@@ -383,7 +398,10 @@ def get_highest_rank(todolist):
 
 
 def fill_in_user_ranks(user):
-    list_of_lists = DB_TodoList.objects.filter(user=user)
+    try:
+        list_of_lists = DB_TodoList.objects.filter(user=user)
+    except:
+        return Http404("User does not exist.")
     for todolist in list_of_lists:
         list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
         for item in list_of_tasks:
