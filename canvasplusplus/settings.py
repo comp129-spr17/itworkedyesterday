@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'tasks',
     'datetimewidget',
     'analytical',
+    'django_cron'
 ]
 
 #password reset
@@ -154,3 +155,10 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'canvasplusplus'
 EMAIL_HOST_PASSWORD = 'itworkedyesterday2'
 EMAIL_USE_TLS = True
+
+#
+#
+#
+CRON_CLASSES = [
+    'tasks.notifications.MyCronJob'
+]
