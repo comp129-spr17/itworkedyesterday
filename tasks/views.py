@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from datetimewidget.widgets import DateTimeWidget
 from tasks.forms import SignUpForm, ProfileForm
-from canvas import add_assignments_DB, get_avatar_url
+from canvas import add_assignments_DB, get_avatar_url, update_assignments_DB
 
 # Create your views here.
 
@@ -65,6 +65,8 @@ def updateProfile(request):
                     user.canvas_token = ""
                     user.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
                 user.save()
+                todol = DB_TodoList.objects.get(owner=user.id)
+                update_assignments_DB(todol, todol.owner, user.canvas_token)
                 return redirect('/login/')
         else:
             user_form = ProfileForm(instance=request.user)

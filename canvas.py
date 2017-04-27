@@ -253,7 +253,7 @@ def add_assignments_DB(TodolistID, UserID, user_token):
         for assignments in assignments_data:
             if str(datetime.datetime.now().isoformat()) <= str(assignments['due_at']):
                 a = DB_Tasks(todo_list=TodolistID,user=UserID,task_name=assignments['name'],start_time=datetime, category=DB_Category.objects.get(id="1"),
-                         end_time=assignments['due_at'],points=assignments.get('points_possible', 0),point_type=assignments.get('grading_type',"Default"),manual_rank = count,
+                         end_time=assignments['due_at'],points=assignments.get('points_possible', 0),point_type=assignments.get('grading_type',"Default"),manual_rank = count, assignment_num=assignments['id'],
                          completed="f")
                 count = count+1
                 a.save()
@@ -261,19 +261,38 @@ def add_assignments_DB(TodolistID, UserID, user_token):
                 a = DB_Tasks(todo_list=TodolistID, user=UserID, task_name=assignments['name'], start_time=datetime,
                              category=DB_Category.objects.get(id="1"), end_time=assignments['due_at'],
                              points=handle_potential_none_points(assignments.get('points_possible', 0)),
-                             point_type=assignments.get('grading_type',"Default"), manual_rank=count,
+                             point_type=assignments.get('grading_type',"Default"), manual_rank=count, assignment_num=assignments['id'],
                              completed="t")
                 count = count + 1
                 a.save()
 
-def update_assignments_DB(user_token):
+def update_assignments_DB(TodolistID, UserID, user_token):
     course_data = get_favorite_courses(user_token)
     count = 1
     for favorite_course in course_data:
         assignments_data = get_assignments(str(favorite_course['id']),user_token)
         for assignments in assignments_data:
-            if str(datetime.datetime.now().isoformat()) <= str(assignments['due_at']):
-                a = DB_Tasks
+            try:
+                a = DB_Tasks.objects.get(user=UserID, assignment_num = assignments['id'])
+            except DB_Tasks.DoesNotExist:
+                if str(datetime.datetime.now().isoformat()) <= str(assignments['due_at']):
+                    a = DB_Tasks(todo_list=TodolistID, user=UserID, task_name=assignments['name'], start_time=datetime,
+                                 category=DB_Category.objects.get(id="1"),
+                                 end_time=assignments['due_at'], points=assignments.get('points_possible', 0),
+                                 point_type=assignments.get('grading_type', "Default"), manual_rank=count,
+                                 assignment_num=assignments['id'],
+                                 completed="f")
+                    count = count + 1
+                    a.save()
+                else:
+                    a = DB_Tasks(todo_list=TodolistID, user=UserID, task_name=assignments['name'], start_time=datetime,
+                                 category=DB_Category.objects.get(id="1"), end_time=assignments['due_at'],
+                                 points=handle_potential_none_points(assignments.get('points_possible', 0)),
+                                 point_type=assignments.get('grading_type', "Default"), manual_rank=count,
+                                 assignment_num=assignments['id'],
+                                 completed="t")
+                    count = count + 1
+                    a.save()
 
 def handle_potential_none_points(points):
     if points is None:
