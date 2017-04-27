@@ -73,6 +73,7 @@ class DB_Tasks(models.Model):
     priority = models.IntegerField(null=True, verbose_name ='Priority')
     manual_rank = models.IntegerField(null=True, verbose_name ='Manual Rank')
     point_priority = models.FloatField(null=True, verbose_name ='Point Priority')
+    assignment_num = models.CharField(max_length=16, null=True, verbose_name='Assignemnt Number')
     class Meta:
         managed = True
         db_table = u'tasks_db_tasks'
