@@ -60,13 +60,13 @@ def updateProfile(request):
                     user.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
                 if user_form.cleaned_data.get('canvas_token') != "":
                     user.canvas_token = user_form.cleaned_data.get('canvas_token')
+                    todol = DB_TodoList.objects.get(owner=user.id)
+                    update_assignments_DB(todol, todol.owner, user.canvas_token)
                     #user.canvas_avatar_url = get_avatar_url(user_form.cleaned_data.get('canvas_token'))
                 else:
                     user.canvas_token = ""
                     user.canvas_avatar_url = "http://manfredonialaw.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png"
                 user.save()
-                todol = DB_TodoList.objects.get(owner=user.id)
-                update_assignments_DB(todol, todol.owner, user.canvas_token)
                 return redirect('/login/')
         else:
             user_form = ProfileForm(instance=request.user)
