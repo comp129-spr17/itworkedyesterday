@@ -1,12 +1,19 @@
 import datetime
 
+import pushpad
 from django_cron import CronJobBase, Schedule
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 from .models import DB_Due, DB_Tasks, DB_User
 
-from django.core.mail import send_mail
+try:
+    token_file = open('pushpad_token.txt', 'r')
+    push_token = token_file.read()
+    push_project = pushpad.Pushpad(auth_token=push_token, project_id=3480)
+except IOError:
+    print("pushpad_token.txt does not exist, please make one.")
 
-from django.contrib.auth.models import User
 
 class MyCronJob(CronJobBase):
     RUN_EVERY_MINS = 5
