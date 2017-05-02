@@ -22,11 +22,11 @@ def fire_safari(task):
 
 
 def fire_email(task):
-    user = User.objects.get(id=task.user)
+    user = User.objects.get(id=task.user.id)
     email = user.email
     send_mail(
         'Canvas++ Notification',
-        'REMINDER: ' + task.task_name + ' is due by ' + task.end_date,
+        'REMINDER: ' + task.task_name + ' is due by ' + str(task.end_time),
         'canvasplusplus@gmail.com',
         [email],
         fail_silently=False,
