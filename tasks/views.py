@@ -160,7 +160,7 @@ class EditForm(forms.Form):
 class ListForm(forms.Form):
     list_name = forms.CharField(label='New List name', required=True, max_length=256)
     service = forms.CharField(label='Service', max_length= 256,widget=forms.Select(choices=service_types), required = False)
-    color = forms.CharField(label='Color', max_length = 256, widget=forms.Select(choices=color_choices), required = False)
+    #color = forms.CharField(label='Color', max_length = 256, widget=forms.Select(choices=color_choices), required = False)
 
 
 class EditFormForProcessing(forms.Form):
@@ -286,9 +286,18 @@ def add_list(request, source, user_id):
         if request.method == 'POST':
             form = ListForm(request.POST)
             if form.is_valid():
-                new_list_name = form.cleaned_data['list_name']
-                list_color = form.cleaned_data['color']
-                service_data = form.cleaned_data['service']
+                try:
+                    new_list_name = form.cleaned_data['list_name']
+                except:
+                    new_list_name = 'Default'
+                try:
+                    list_color = form.cleaned_data['color']
+                except:
+                    list_color = 'red'
+                try:
+                    service_data = form.cleaned_data['service']
+                except:
+                    service_data = 'Default'
             try:
                 user = DB_User.objects.get(id=user_id)
             except ObjectDoesNotExist:
