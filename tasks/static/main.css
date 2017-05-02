@@ -55,15 +55,6 @@
 	padding: 5px 10px;
 }
 
-.listContainer .list .task .showOnHover{
-	display: none;
-}
-
-.listContainer .list .task:hover .showOnHover{
-	display: inline-block;
-	float: right;
-}
-
 .signInContainer .input-group{
 	display: block;
 	margin: 10% 20% 0 20%;
@@ -78,12 +69,57 @@
 .taskBlock:hover .buttonGroup{
 	display: block;
 	float: right;
-	padding-right: 25px;
+margin-right: 4%;
 	padding-top: 25px;
+}
+.usernameB{
+	font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif;
+	font-size: 17px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 23px;
+	margin-top:10px;
+	margin-left:3%;
+}
+
+.imgB{
+	margin-left:3%;
+}
+
+#newListButton{
+	display: inline-block;
+	width:5%;
+	margin-right: 3%;
+	float:right;
+	margin-top:70px;
+}
+
+.profileBlock{
+	margin:auto;
+	width:23%;
+	padding-top: 25px;
+}
+
+.signupBlock .helptext{
+	display: inline-block;
+	width:40;
+	margin:auto;
 }
 
 .buttonGroup{
 	display: none;
+}
+
+.signupBlock{
+	margin:auto;
+	width:40%;
+}
+
+.loginBlock,{
+	margin:auto;
+	padding-top:25px;
+	width:23%;
 }
 
 .taskText li{

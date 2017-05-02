@@ -67,8 +67,10 @@
 				  </div><!-- /.container-fluid -->
 				</nav>
 		</header>
-		<p>Welcome, {{username}}.</p><p><img src={{ imgurl }} alt= {{ username }} height="100" width="100"></p>
+		<p class="usernameB">Welcome, {{username}}.</p>
+		<p class="imgB"><img src={{ imgurl }} alt= {{ username }} height="100" width="100">
 		<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#new_list" id="newListButton">New List</button>
+		</p>
 		<!--TODO: Make me do shit -->
 
 		{% include lists %}

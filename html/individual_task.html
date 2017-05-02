@@ -22,6 +22,17 @@
         <p>&nbsp;&nbsp;<b>Points:</b> {{ item.points }} {% if item.priority == 1 %}<b>Priority:</b> !{% elif item.priority == 2 %}<b>Priority:</b> !!{% elif item.priority == 3 %}<b>Priority:</b> !!!{% endif %} {% if item.end_time is not None %}<b>Due Date:</b> {{ item.end_time }}{% endif %}</p>
     </div>
   </div>
+<style>
+hr {
+    display: block;
+    margin:0px;
+    margin-right:3%;
+    border-style: inset;
+    border-width: 1px;
+    border-top: 1px solid #404040;
+}
+</style>
+<hr>
 </div>
 {% include edit %}
 {% endwith %}
