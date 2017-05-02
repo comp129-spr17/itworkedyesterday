@@ -24,6 +24,19 @@ from datetimewidget.widgets import DateTimeWidget
 from tasks.forms import SignUpForm
 from canvas import add_assignments_DB, get_avatar_url, update_assignments_DB
 
+
+service_types = {
+    ("Default","Canvas"),
+    ("Other" , "Other Type")
+}
+
+color_choices = {
+    ("red", 'Red'),
+    ("blue", "Blue"),
+    ("green", "Green"),
+    ('yellow', 'Yellow'),
+    ('orange','Orange')
+}
 # Create your views here.
 
 class Todos:
@@ -51,8 +64,10 @@ def updateProfile(request):
         user = DB_User.objects.get(user=request.user.id)
 
         class ProfileForm(forms.ModelForm):
+            username = forms.CharField(max_length=30, required=True)
             canvas_token = forms.CharField(max_length=100, required=False, initial=user.canvas_token)
             canvas_avatar_url = forms.CharField(max_length=300, required=False, initial=user.canvas_avatar_url)
+
             class Meta:
                 model = User
                 fields = ('username', 'first_name', 'last_name', 'email', 'canvas_token', 'canvas_avatar_url')
@@ -131,6 +146,10 @@ class EditForm(forms.Form):
             self.fields['priority'] = forms.IntegerField(label='priority', required=False, initial=task.priority)
             self.fields['due_date'] = forms.DateTimeField(label='due_date', required=False, initial=task.end_time, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
 
+class ListForm(forms.Form):
+    list_name = forms.CharField(label='New List name', required=True, max_length=256)
+    service = forms.CharField(label='Service', max_length= 256,widget=forms.Select(choices=service_types), required = False)
+    color = forms.CharField(label='Color', max_length = 256, widget=forms.Select(choices=color_choices), required = False)
 
 class EditFormForProcessing(forms.Form):
     task_name = forms.CharField(label='task_name', required=False, max_length=256)
@@ -150,6 +169,7 @@ sorting_types = {
 }
 
 
+
 def home(request):
     return redirect('/tasks/')
 
@@ -164,7 +184,7 @@ def handle_source(source):
 def create_task(user, list_id, name):
     return DB_Tasks(user=user, task_name=name, todo_list=list_id, category="Default")
 
-def create_list(user, list_name, service='Defauly'):
+def create_list(user, list_name, service='Default'):
     return DB_TodoList(owner=user, name=list_name, service=source)
 
 def get_task(user_id, task_id):
@@ -248,6 +268,24 @@ def add_task(request, source, user_id, list_id):
             task.save()
             if task.end_time is not None:
                 handle_due_date(task)
+    return sort_todos(request)
+
+
+def add_list(request, source, user_id):
+    if request.method == 'POST':
+        form = ListForm(request.POST)
+        if form.is_valid():
+            new_list_name = form.cleaned_data['list_name']
+            list_color = form.cleaned_data['color']
+            service_data = form.cleaned_data['service']
+        try:
+            user = DB_User.objects.get(id=user_id)
+        except ObjectDoesNotExist:
+            return Http404("User does not exist.")
+        list_object = DB_TodoList(owner = user, name = new_list_name,
+        color = list_color, service = service_data, canvas_course = 'NA')
+        list_object.save()
+        print(list_object)
     else:
         form = NameForm()
     return sort_todos(request)
@@ -340,6 +378,7 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
         todo_list_names = []
         i = 0
         new_task_form = TaskForm()
+        new_list_form = ListForm()
         for cur_list in lists:
             this_list = DB_Tasks.objects.filter(todo_list=cur_list, completed=completed_val).order_by(key)
             sub_list = []
@@ -361,7 +400,9 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
                                               'add': get_template('add.html'),
                                               'edit': get_template('edit.html'),
                                               'sorting': get_template('sorting.html'),
-                                              'individual_task': get_template('individual_task.html')})
+                                              'new_list_form_popup':new_list_form,
+                                              'individual_task': get_template('individual_task.html'),
+                                              'new_list': get_template('new_list.html')})
     else:
         return redirect('/login/')
 
