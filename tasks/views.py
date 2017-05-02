@@ -128,10 +128,10 @@ def signup(request):
 
 
 class TaskForm(forms.Form):
-    task_name = forms.CharField(label='task_name', required=True, max_length=256)
-    points = forms.IntegerField(label='point', required=False)
-    priority = forms.ChoiceField(label='priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')])
-    due_date = forms.SplitDateTimeField(label='due_date', required=False)
+    task_name = forms.CharField(label='Task Name:', required=True, max_length=256)
+    points = forms.IntegerField(label='Points:', required=False)
+    priority = forms.ChoiceField(label='Priority:', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')])
+    due_date = forms.SplitDateTimeField(label='Due Date and Time (YYYY-MM-DD|HH:MM:SS):', required=False)
 
 
 time_formats = [
@@ -144,17 +144,17 @@ time_formats = [
 ]
 
 class EditForm(forms.Form):
-    task_name = forms.CharField(label='task_name', required=False, max_length=256)
-    points = forms.IntegerField(label='point', required=False)
-    priority = forms.ChoiceField(label='priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')])
-    due_date = forms.SplitDateTimeField(label='due_date', required=False, input_time_formats=time_formats)
+    task_name = forms.CharField(label='Task Name:', required=False, max_length=256)
+    points = forms.IntegerField(label='Points:', required=False)
+    priority = forms.ChoiceField(label='Priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')])
+    due_date = forms.SplitDateTimeField(label='Updated Due Date and Time (YYYY-MM-DD|HH:MM:SS):', required=False, input_time_formats=time_formats)
     def __init__(self, task=None, *args, **kwargs):
         super(EditForm, self).__init__(*args, **kwargs)
         if task is not None:
-            self.fields['task_name'] = forms.CharField(label='task_name', required=True, max_length=256, initial=task.task_name)
-            self.fields['points'] = forms.IntegerField(label='point', required=False, initial=task.points)
-            self.fields['priority'] = forms.ChoiceField(label='priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')], initial=task.priority)
-            self.fields['due_date'] = forms.SplitDateTimeField(label='due_date', required=False, initial=task.end_time, input_time_formats=time_formats)
+            self.fields['task_name'] = forms.CharField(label='Task Name:', required=True, max_length=256, initial=task.task_name)
+            self.fields['points'] = forms.IntegerField(label='Points:', required=False, initial=task.points)
+            self.fields['priority'] = forms.ChoiceField(label='Priority:', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')], initial=task.priority)
+            self.fields['due_date'] = forms.SplitDateTimeField(label='Updated Due Date and Time (YYYY-MM-DD|HH:MM:SS):', required=False, initial=task.end_time, input_time_formats=time_formats)
 
 
 class ListForm(forms.Form):
@@ -164,10 +164,10 @@ class ListForm(forms.Form):
 
 
 class EditFormForProcessing(forms.Form):
-    task_name = forms.CharField(label='task_name', required=False, max_length=256)
-    points = forms.IntegerField(label='point', required=False)
-    priority = forms.IntegerField(label='priority', required=False)
-    due_date = forms.SplitDateTimeField(label='due_date', required=False, input_time_formats=time_formats)
+    task_name = forms.CharField(label='Task Name', required=False, max_length=256)
+    points = forms.IntegerField(label='Points', required=False)
+    priority = forms.IntegerField(label='Priority', required=False)
+    due_date = forms.SplitDateTimeField(label='Due Date and Time (YYYY-MM-DD|HH:MM:SS):', required=False, input_time_formats=time_formats)
 
 
 sorting_types = {
@@ -253,8 +253,6 @@ def edit_task(request, source, user_id, task_id):
 
 def add_task(request, source, user_id, list_id):
     if request.user.id == int(user_id):
-        print("hi")
-
         if request.method == 'POST':
             form = TaskForm(request.POST)
             if form.is_valid():
@@ -275,6 +273,8 @@ def add_task(request, source, user_id, list_id):
                     task.priority = form.cleaned_data['priority']
                 if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
                     task.end_time = form.cleaned_data['due_date']
+                else:
+                    task.end_time = None
                 task.save()
                 if task.end_time is not None:
                     handle_due_date(task)
@@ -283,8 +283,6 @@ def add_task(request, source, user_id, list_id):
 
 def add_list(request, source, user_id):
     if request.user.id == int(user_id):
-        print("i exist.")
-
         if request.method == 'POST':
             form = ListForm(request.POST)
             if form.is_valid():
