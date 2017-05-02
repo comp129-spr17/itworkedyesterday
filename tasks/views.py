@@ -51,8 +51,10 @@ def updateProfile(request):
         user = DB_User.objects.get(user=request.user.id)
 
         class ProfileForm(forms.ModelForm):
+            username = forms.CharField(max_length=30, required=True)
             canvas_token = forms.CharField(max_length=100, required=False, initial=user.canvas_token)
             canvas_avatar_url = forms.CharField(max_length=300, required=False, initial=user.canvas_avatar_url)
+
             class Meta:
                 model = User
                 fields = ('username', 'first_name', 'last_name', 'email', 'canvas_token', 'canvas_avatar_url')
