@@ -230,7 +230,7 @@ def handle_due_date(task):
 
 
 def edit_task(request, source, user_id, task_id):
-    if request.user.id == user_id:
+    if request.user.id == int(user_id):
         if request.method == 'POST':
             try:
                 selected_task = get_task(user_id, task_id)
@@ -252,7 +252,9 @@ def edit_task(request, source, user_id, task_id):
 
 
 def add_task(request, source, user_id, list_id):
-    if request.user.id == user_id:
+    if request.user.id == int(user_id):
+        print("hi")
+
         if request.method == 'POST':
             form = TaskForm(request.POST)
             if form.is_valid():
