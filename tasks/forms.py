@@ -13,7 +13,8 @@ class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     canvas_token = forms.CharField(max_length=100, required=False, help_text='Optional.')
-    email = forms.EmailField(max_length=254, help_text='Required. Input a valid email address.')
+    email = forms.EmailField(max_length=254, required=True, help_text='Required. Input a valid email address.')
+
 
     class Meta:
         model = User
