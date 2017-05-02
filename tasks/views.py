@@ -21,7 +21,7 @@ from django.contrib.admin import widgets
 from django.core.exceptions import ObjectDoesNotExist
 
 from datetimewidget.widgets import DateTimeWidget
-from tasks.forms import SignUpForm, ProfileForm
+from tasks.forms import SignUpForm
 from canvas import add_assignments_DB, get_avatar_url, update_assignments_DB
 
 # Create your views here.
@@ -43,10 +43,19 @@ class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
 
+
+
 def updateProfile(request):
+
     if request.user.is_authenticated:
         user = DB_User.objects.get(user=request.user.id)
 
+        class ProfileForm(forms.ModelForm):
+            canvas_token = forms.CharField(max_length=100, required=False, initial=user.canvas_token)
+            canvas_avatar_url = forms.CharField(max_length=300, required=False, initial=user.canvas_avatar_url)
+            class Meta:
+                model = User
+                fields = ('username', 'first_name', 'last_name', 'email', 'canvas_token', 'canvas_avatar_url')
 
         if request.method == 'POST':
             user_form = ProfileForm(request.POST, instance=request.user)
