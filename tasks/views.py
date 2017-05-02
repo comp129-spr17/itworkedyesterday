@@ -30,6 +30,7 @@ service_types = {
     ("Other" , "Other Type")
 }
 
+
 color_choices = {
     ("red", 'Red'),
     ("blue", "Blue"),
@@ -37,7 +38,7 @@ color_choices = {
     ('yellow', 'Yellow'),
     ('orange','Orange')
 }
-# Create your views here.
+
 
 class Todos:
     def __init__(self, name, todos, id_num):
@@ -57,9 +58,7 @@ class Direction(Enum):
     DESCENDING = 1
 
 
-
 def updateProfile(request):
-
     if request.user.is_authenticated:
         user = DB_User.objects.get(user=request.user.id)
 
@@ -126,36 +125,48 @@ def signup(request):
 
     return render(request, 'signup.html', {'form': form})
 
+
 class TaskForm(forms.Form):
     task_name = forms.CharField(label='task_name', required=True, max_length=256)
     points = forms.IntegerField(label='point', required=False)
-    priority = forms.IntegerField(label='priority', required=False)
-    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+    priority = forms.ChoiceField(label='priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')])
+    due_date = forms.SplitDateTimeField(label='due_date', required=False)
 
+
+time_formats = [
+    '%H:%M:%S',     # '14:30:59'
+    '%H:%M',        # '14:30'
+    '%H:%M:%S%p',
+    '%H:%M%p',
+    '%H:%M:%S %p',
+    '%H:%M %p'
+]
 
 class EditForm(forms.Form):
     task_name = forms.CharField(label='task_name', required=False, max_length=256)
     points = forms.IntegerField(label='point', required=False)
-    priority = forms.IntegerField(label='priority', required=False)
-    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+    priority = forms.ChoiceField(label='priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')])
+    due_date = forms.SplitDateTimeField(label='due_date', required=False, input_time_formats=time_formats)
     def __init__(self, task=None, *args, **kwargs):
         super(EditForm, self).__init__(*args, **kwargs)
         if task is not None:
             self.fields['task_name'] = forms.CharField(label='task_name', required=True, max_length=256, initial=task.task_name)
             self.fields['points'] = forms.IntegerField(label='point', required=False, initial=task.points)
-            self.fields['priority'] = forms.IntegerField(label='priority', required=False, initial=task.priority)
-            self.fields['due_date'] = forms.DateTimeField(label='due_date', required=False, initial=task.end_time, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+            self.fields['priority'] = forms.ChoiceField(label='priority', required=False, choices=[(1, '!'), (2, '!!'), (3, '!!!')], initial=task.priority)
+            self.fields['due_date'] = forms.SplitDateTimeField(label='due_date', required=False, initial=task.end_time, input_time_formats=time_formats)
+
 
 class ListForm(forms.Form):
     list_name = forms.CharField(label='New List name', required=True, max_length=256)
     service = forms.CharField(label='Service', max_length= 256,widget=forms.Select(choices=service_types), required = False)
     color = forms.CharField(label='Color', max_length = 256, widget=forms.Select(choices=color_choices), required = False)
 
+
 class EditFormForProcessing(forms.Form):
     task_name = forms.CharField(label='task_name', required=False, max_length=256)
     points = forms.IntegerField(label='point', required=False)
     priority = forms.IntegerField(label='priority', required=False)
-    due_date = forms.DateTimeField(label='due_date', required=False, widget=DateTimeWidget(usel10n=True, bootstrap_version=3))
+    due_date = forms.SplitDateTimeField(label='due_date', required=False, input_time_formats=time_formats)
 
 
 sorting_types = {
@@ -169,23 +180,17 @@ sorting_types = {
 }
 
 
-
 def home(request):
     return redirect('/tasks/')
-
-
-def handle_source(source):
-    if source != "":
-        return HttpResponseRedirect(source)
-    else:
-        return HttpResponseRedirect('/tasks/')
 
 
 def create_task(user, list_id, name):
     return DB_Tasks(user=user, task_name=name, todo_list=list_id, category="Default")
 
+
 def create_list(user, list_name, service='Default'):
     return DB_TodoList(owner=user, name=list_name, service=source)
+
 
 def get_task(user_id, task_id):
     return DB_Tasks.objects.get(user=user_id, id=task_id)
@@ -198,7 +203,7 @@ def removed_task(request, source, user_id, task_id):
         raise Http404("Task does not exist.")
     if selected_task is not None:
         selected_task.delete()
-    return handle_source(source)
+    return redirect('/tasks/')
 
 
 def complete_task(request, source, user_id, task_id):
@@ -209,7 +214,7 @@ def complete_task(request, source, user_id, task_id):
     if selected_task is not None:
         selected_task.completed = not selected_task.completed
         selected_task.save()
-    return handle_source(source)
+    return redirect('/tasks/')
 
 
 def handle_due_date(task):
@@ -224,131 +229,140 @@ def handle_due_date(task):
 
 
 def edit_task(request, source, user_id, task_id):
-    if request.method == 'POST':
-        try:
-            selected_task = get_task(user_id, task_id)
-        except ObjectDoesNotExist:
-            raise Http404("Task does not exist.")
-        form = EditFormForProcessing(request.POST)
-        if form.is_valid():
-            if selected_task is not None:
-                selected_task.task_name = form.cleaned_data['task_name']
-                selected_task.points = form.cleaned_data['points']
-                selected_task.priority = form.cleaned_data['priority']
-                selected_task.end_time = form.cleaned_data['due_date']
-                selected_task.save()
-                if selected_task.end_time is not None:
-                    handle_due_date(selected_task)
-    else:
-        form = EditFormForProcessing()
-    return sort_todos(request)
+    if request.user.id == user_id:
+        if request.method == 'POST':
+            try:
+                selected_task = get_task(user_id, task_id)
+            except ObjectDoesNotExist:
+                raise Http404("Task does not exist.")
+            form = EditFormForProcessing(request.POST)
+            if form.is_valid():
+                if selected_task is not None:
+                    selected_task.task_name = form.cleaned_data['task_name']
+                    selected_task.points = form.cleaned_data['points']
+                    selected_task.priority = form.cleaned_data['priority']
+                    selected_task.end_time = form.cleaned_data['due_date']
+                    selected_task.save()
+                    if selected_task.end_time is not None:
+                        handle_due_date(selected_task)
+        else:
+            form = EditFormForProcessing()
+    return redirect('/tasks/')
 
 
 def add_task(request, source, user_id, list_id):
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            new_task = form.cleaned_data['task_name']
-            try:
-                owner = DB_User.objects.get(id=user_id)
-                containing_list = DB_TodoList.objects.get(id=list_id, owner=owner)
-            except ObjectDoesNotExist:
-                raise Http404("List does not exist.")
-            category = DB_Category.objects.get(id=1)
-            task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
-                            completed=False, points=0, point_type="Default",
-                            category=category, manual_rank=get_highest_rank(containing_list)+1,
-                            start_time=datetime.now(), end_time=None)
-            if form.cleaned_data['points'] is not None:
-                task.points = form.cleaned_data['points']
-            if form.cleaned_data['priority'] is not None:
-                task.priority = form.cleaned_data['priority']
-            if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
-                task.end_time = form.cleaned_data['due_date']
-            task.save()
-            if task.end_time is not None:
-                handle_due_date(task)
-    return sort_todos(request)
+    if request.user.id == user_id:
+        if request.method == 'POST':
+            form = TaskForm(request.POST)
+            if form.is_valid():
+                new_task = form.cleaned_data['task_name']
+                try:
+                    owner = DB_User.objects.get(id=user_id)
+                    containing_list = DB_TodoList.objects.get(id=list_id, owner=owner)
+                except ObjectDoesNotExist:
+                    raise Http404("List does not exist.")
+                category = DB_Category.objects.get(id=1)
+                task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
+                                completed=False, points=0, point_type="Default",
+                                category=category, manual_rank=get_highest_rank(containing_list)+1,
+                                start_time=datetime.now(), end_time=None)
+                if form.cleaned_data['points'] is not None:
+                    task.points = form.cleaned_data['points']
+                if form.cleaned_data['priority'] is not None:
+                    task.priority = form.cleaned_data['priority']
+                if form.cleaned_data['due_date'] is not None or form.cleaned_data['due_date'] != "":
+                    task.end_time = form.cleaned_data['due_date']
+                task.save()
+                if task.end_time is not None:
+                    handle_due_date(task)
+    return redirect('/tasks/')
 
 
 def add_list(request, source, user_id):
-    if request.method == 'POST':
-        form = ListForm(request.POST)
-        if form.is_valid():
-            new_list_name = form.cleaned_data['list_name']
-            list_color = form.cleaned_data['color']
-            service_data = form.cleaned_data['service']
-        try:
-            user = DB_User.objects.get(id=user_id)
-        except ObjectDoesNotExist:
-            return Http404("User does not exist.")
-        list_object = DB_TodoList(owner = user, name = new_list_name,
-        color = list_color, service = service_data, canvas_course = 'NA')
-        list_object.save()
-        print(list_object)
-    else:
-        form = NameForm()
-    return sort_todos(request)
+    if request.user.id == user_id:
+        if request.method == 'POST':
+            form = ListForm(request.POST)
+            if form.is_valid():
+                new_list_name = form.cleaned_data['list_name']
+                list_color = form.cleaned_data['color']
+                service_data = form.cleaned_data['service']
+            try:
+                user = DB_User.objects.get(id=user_id)
+            except ObjectDoesNotExist:
+                return Http404("User does not exist.")
+            list_object = DB_TodoList(owner = user, name = new_list_name,
+            color = list_color, service = service_data, canvas_course = 'NA')
+            list_object.save()
+            print(list_object)
+        else:
+            form = NameForm()
+    return redirect('/tasks/')
 
 
 def move_up(request, source, user_id, task_id, completed_val):
-    try:
-        selected_task = get_task(user_id, task_id)
-        user = DB_User(id=user_id)
-    except ObjectDoesNotExist:
-        raise Http404("Task does not exist.")
-    above_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('manual_rank')
-    above_task = None
-    for task in above_tasks:
-        if task.manual_rank <= selected_task.manual_rank:
-            continue
-        else:
-            above_task = task
-            break
-    if above_task is None:
+    if request.user.id == user_id:
+        try:
+            selected_task = get_task(user_id, task_id)
+            user = DB_User(id=user_id)
+        except ObjectDoesNotExist:
+            raise Http404("Task does not exist.")
+        above_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('manual_rank')
+        above_task = None
+        for task in above_tasks:
+            if task.manual_rank <= selected_task.manual_rank:
+                continue
+            else:
+                above_task = task
+                break
+        if above_task is None:
+            if completed_val:
+                return handle_source('/tasks/completed/')
+            else:
+                return handle_source('/tasks/')
+        if selected_task is not None:
+            selected_task.manual_rank += 1
+            above_task.manual_rank -= 1
+            selected_task.save()
+            above_task.save()
         if completed_val:
-            return handle_source('/tasks/completed/')
+            return redirect('/tasks/completed/')
         else:
-            return handle_source('/tasks/')
-    if selected_task is not None:
-        selected_task.manual_rank += 1
-        above_task.manual_rank -= 1
-        selected_task.save()
-        above_task.save()
-    if completed_val:
-        return handle_source('/tasks/completed/')
+            return redirect('/tasks/')
     else:
-        return handle_source('/tasks/')
+        return home(request)
 
 
 def move_down(request, source, user_id, task_id, completed_val):
-    try:
-        selected_task = get_task(user_id, task_id)
-        user = DB_User(id=user_id)
-    except ObjectDoesNotExist:
-        raise Http404("Task does not exist.")
-    below_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('-manual_rank')
-    below_task = None
-    for task in below_tasks:
-        if task.manual_rank >= selected_task.manual_rank:
-            continue
-        else:
-            below_task = task
-            break
-    if below_task is None:
+    if request.user.id:
+        try:
+            selected_task = get_task(user_id, task_id)
+            user = DB_User(id=user_id)
+        except ObjectDoesNotExist:
+            raise Http404("Task does not exist.")
+        below_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('-manual_rank')
+        below_task = None
+        for task in below_tasks:
+            if task.manual_rank >= selected_task.manual_rank:
+                continue
+            else:
+                below_task = task
+                break
+        if below_task is None:
+            if completed_val:
+                return handle_source('/tasks/completed/')
+            else:
+                return handle_source('/tasks/')
+        if selected_task is not None:
+            selected_task.manual_rank -= 1
+            below_task.manual_rank += 1
+            selected_task.save()
+            below_task.save()
         if completed_val:
-            return handle_source('/tasks/completed/')
+            return redirect('/tasks/completed/')
         else:
-            return handle_source('/tasks/')
-    if selected_task is not None:
-        selected_task.manual_rank -= 1
-        below_task.manual_rank += 1
-        selected_task.save()
-        below_task.save()
-    if completed_val:
-        return handle_source('/tasks/completed/')
+            return redirect('/tasks/')
     else:
-        return handle_source('/tasks/')
+        return home(request)
 
 '''
 Task Sorting
@@ -405,43 +419,6 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
                                               'new_list': get_template('new_list.html')})
     else:
         return redirect('/login/')
-
-
-def sort_by_course(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request, 'todo_list_id',direction, completed)
-
-
-# TODO: detect whether or not grading_type is by: 'points', 'letter_grade', or 'gpa_scale'
-def sort_by_points(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'points',direction, completed)
-
-
-def sort_by_start_time(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'start_time',direction, completed)
-
-
-def sort_by_due_time(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'end_time', direction, completed)
-
-
-def sort_by_category(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'category', direction, completed)
-
-
-def sort_by_name(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'task_name', direction, completed)
-
-
-def sort_by_point_type(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'point_type', direction, completed)
-
-
-def sort_by_priority(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'priority', direction, completed)
-
-
-def sort_by_manual_rank(request, direction=Direction.ASCENDING, completed=False):
-    return sort_todos(request,'manual_rank', direction, completed)
 
 
 def get_highest_rank(todolist):
