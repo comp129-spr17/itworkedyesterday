@@ -279,7 +279,9 @@ def add_task(request, source, user_id, list_id):
 
 
 def add_list(request, source, user_id):
-    if request.user.id == user_id:
+    if request.user.id == int(user_id):
+        print("i exist.")
+
         if request.method == 'POST':
             form = ListForm(request.POST)
             if form.is_valid():
