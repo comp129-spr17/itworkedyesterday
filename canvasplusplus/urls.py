@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^([.+/]?)com/([0-9]+)/([0-9]+)/$', views.complete_task),
     url(r'^([.+/]?)edt/([0-9]+)/([0-9]+)/$', views.edit_task),
     url(r'^([.+/]?)add/([0-9]+)/([0-9]+)/$', views.add_task),
+    url(r'^([.+/]?)lst/([0-9]+)/$', views.add_list),
     url(r'^([.+/]?)completed/upw/([0-9]+)/([0-9]+)/$', views.move_up, {'completed_val': True}),
     url(r'^([.+/]?)completed/dwn/([0-9]+)/([0-9]+)/$', views.move_down, {'completed_val': True}),
     url(r'^([.+/]?)upw/([0-9]+)/([0-9]+)/$', views.move_up, {'completed_val': False}),
