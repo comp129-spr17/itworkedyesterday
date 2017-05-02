@@ -52,6 +52,8 @@
 		<form method="post">
             {% csrf_token %}
             {{ user_form.as_p }}
+			<a href="/password_reset/">Reset Password Here</a> <br />
+			<br />
             <input type="submit" />
         </form>
 

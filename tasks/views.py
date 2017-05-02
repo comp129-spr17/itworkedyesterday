@@ -21,7 +21,7 @@ from django.contrib.admin import widgets
 from django.core.exceptions import ObjectDoesNotExist
 
 from datetimewidget.widgets import DateTimeWidget
-from tasks.forms import SignUpForm, ProfileForm
+from tasks.forms import SignUpForm
 from canvas import add_assignments_DB, get_avatar_url, update_assignments_DB
 
 
@@ -56,10 +56,21 @@ class Direction(Enum):
     ASCENDING = 0
     DESCENDING = 1
 
+
+
 def updateProfile(request):
+
     if request.user.is_authenticated:
         user = DB_User.objects.get(user=request.user.id)
 
+        class ProfileForm(forms.ModelForm):
+            username = forms.CharField(max_length=30, required=True)
+            canvas_token = forms.CharField(max_length=100, required=False, initial=user.canvas_token)
+            canvas_avatar_url = forms.CharField(max_length=300, required=False, initial=user.canvas_avatar_url)
+
+            class Meta:
+                model = User
+                fields = ('username', 'first_name', 'last_name', 'email', 'canvas_token', 'canvas_avatar_url')
 
         if request.method == 'POST':
             user_form = ProfileForm(request.POST, instance=request.user)
@@ -181,14 +192,20 @@ def get_task(user_id, task_id):
 
 
 def removed_task(request, source, user_id, task_id):
-    selected_task = get_task(user_id, task_id)
+    try:
+        selected_task = get_task(user_id, task_id)
+    except ObjectDoesNotExist:
+        raise Http404("Task does not exist.")
     if selected_task is not None:
         selected_task.delete()
     return handle_source(source)
 
 
 def complete_task(request, source, user_id, task_id):
-    selected_task = get_task(user_id, task_id)
+    try:
+        selected_task = get_task(user_id, task_id)
+    except ObjectDoesNotExist:
+        raise Http404("Task does not exist.")
     if selected_task is not None:
         selected_task.completed = not selected_task.completed
         selected_task.save()
@@ -211,7 +228,7 @@ def edit_task(request, source, user_id, task_id):
         try:
             selected_task = get_task(user_id, task_id)
         except ObjectDoesNotExist:
-            return Http404("Task does not exist.")
+            raise Http404("Task does not exist.")
         form = EditFormForProcessing(request.POST)
         if form.is_valid():
             if selected_task is not None:
@@ -236,7 +253,7 @@ def add_task(request, source, user_id, list_id):
                 owner = DB_User.objects.get(id=user_id)
                 containing_list = DB_TodoList.objects.get(id=list_id, owner=owner)
             except ObjectDoesNotExist:
-                return Http404("List does not exist.")
+                raise Http404("List does not exist.")
             category = DB_Category.objects.get(id=1)
             task = DB_Tasks(user=owner, todo_list=containing_list, task_name=new_task,
                             completed=False, points=0, point_type="Default",
@@ -279,7 +296,7 @@ def move_up(request, source, user_id, task_id, completed_val):
         selected_task = get_task(user_id, task_id)
         user = DB_User(id=user_id)
     except ObjectDoesNotExist:
-        return Http404("Task does not exist.")
+        raise Http404("Task does not exist.")
     above_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('manual_rank')
     above_task = None
     for task in above_tasks:
@@ -309,7 +326,7 @@ def move_down(request, source, user_id, task_id, completed_val):
         selected_task = get_task(user_id, task_id)
         user = DB_User(id=user_id)
     except ObjectDoesNotExist:
-        return Http404("Task does not exist.")
+        raise Http404("Task does not exist.")
     below_tasks = DB_Tasks.objects.filter(user=user, todo_list=selected_task.todo_list, completed=completed_val).order_by('-manual_rank')
     below_task = None
     for task in below_tasks:
@@ -347,7 +364,7 @@ def sort_todos(request, key='sort_by_manual_rank', direction=Direction.DESCENDIN
         try:
             user = DB_User.objects.get(user=request.user.id)
         except ObjectDoesNotExist:
-            return Http404("User does not exist.")
+            raise Http404("User does not exist.")
         key = sorting_types.get(key, key)
         if direction == Direction.DESCENDING:
             key = '-' + key
@@ -440,7 +457,7 @@ def fill_in_user_ranks(user):
     try:
         list_of_lists = DB_TodoList.objects.filter(user=user)
     except:
-        return Http404("User does not exist.")
+        raise Http404("User does not exist.")
     for todolist in list_of_lists:
         list_of_tasks = DB_Tasks.objects.filter(todo_list=todolist)
         for item in list_of_tasks:
