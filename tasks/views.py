@@ -305,7 +305,6 @@ def add_list(request, source, user_id):
             list_object = DB_TodoList(owner = user, name = new_list_name,
             color = list_color, service = service_data, canvas_course = 'NA')
             list_object.save()
-            print(list_object)
         else:
             form = NameForm()
     return redirect('/tasks/')
